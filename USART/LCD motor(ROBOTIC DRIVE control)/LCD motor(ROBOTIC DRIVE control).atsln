@@ -1,0 +1,20 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Atmel Studio Solution File, Format Version 11.00
+Project("{54F91283-7BC4-4236-8FF9-10F437C3AD48}") = "LCD motor(ROBOTIC DRIVE control)", "LCD motor(ROBOTIC DRIVE control)\LCD motor(ROBOTIC DRIVE control).cproj", "{69A0B6B9-EE5F-45F0-B139-A102C32B52FD}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|AVR = Debug|AVR
+		Release|AVR = Release|AVR
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{69A0B6B9-EE5F-45F0-B139-A102C32B52FD}.Debug|AVR.ActiveCfg = Debug|AVR
+		{69A0B6B9-EE5F-45F0-B139-A102C32B52FD}.Debug|AVR.Build.0 = Debug|AVR
+		{69A0B6B9-EE5F-45F0-B139-A102C32B52FD}.Release|AVR.ActiveCfg = Release|AVR
+		{69A0B6B9-EE5F-45F0-B139-A102C32B52FD}.Release|AVR.Build.0 = Release|AVR
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

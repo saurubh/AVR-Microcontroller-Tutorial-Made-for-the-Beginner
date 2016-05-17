@@ -1,0 +1,3 @@
+//  the default frequency of the delay is 1 MHz and in this way it sets the frequency to 8MHz
+//  6 zeroes is coz mega is 10^6
+#define F_CPU 8000000

@@ -1,0 +1,260 @@
+
+4bit-LCD.elf:     file format elf32-avr
+
+Sections:
+Idx Name          Size      VMA       LMA       File off  Algn
+  0 .text         000000f2  00000000  00000000  00000074  2**1
+                  CONTENTS, ALLOC, LOAD, READONLY, CODE
+  1 .data         00000000  00800060  000000f2  00000166  2**0
+                  CONTENTS, ALLOC, LOAD, DATA
+  2 .comment      00000030  00000000  00000000  00000166  2**0
+                  CONTENTS, READONLY
+  3 .debug_aranges 00000048  00000000  00000000  00000196  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  4 .debug_info   0000042f  00000000  00000000  000001de  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  5 .debug_abbrev 0000016c  00000000  00000000  0000060d  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  6 .debug_line   000001f1  00000000  00000000  00000779  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  7 .debug_frame  00000084  00000000  00000000  0000096c  2**2
+                  CONTENTS, READONLY, DEBUGGING
+  8 .debug_str    0000018b  00000000  00000000  000009f0  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  9 .debug_loc    0000017e  00000000  00000000  00000b7b  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 10 .debug_ranges 00000038  00000000  00000000  00000cf9  2**0
+                  CONTENTS, READONLY, DEBUGGING
+
+Disassembly of section .text:
+
+00000000 <__vectors>:
+   0:	12 c0       	rjmp	.+36     	; 0x26 <__ctors_end>
+   2:	19 c0       	rjmp	.+50     	; 0x36 <__bad_interrupt>
+   4:	18 c0       	rjmp	.+48     	; 0x36 <__bad_interrupt>
+   6:	17 c0       	rjmp	.+46     	; 0x36 <__bad_interrupt>
+   8:	16 c0       	rjmp	.+44     	; 0x36 <__bad_interrupt>
+   a:	15 c0       	rjmp	.+42     	; 0x36 <__bad_interrupt>
+   c:	14 c0       	rjmp	.+40     	; 0x36 <__bad_interrupt>
+   e:	13 c0       	rjmp	.+38     	; 0x36 <__bad_interrupt>
+  10:	12 c0       	rjmp	.+36     	; 0x36 <__bad_interrupt>
+  12:	11 c0       	rjmp	.+34     	; 0x36 <__bad_interrupt>
+  14:	10 c0       	rjmp	.+32     	; 0x36 <__bad_interrupt>
+  16:	0f c0       	rjmp	.+30     	; 0x36 <__bad_interrupt>
+  18:	0e c0       	rjmp	.+28     	; 0x36 <__bad_interrupt>
+  1a:	0d c0       	rjmp	.+26     	; 0x36 <__bad_interrupt>
+  1c:	0c c0       	rjmp	.+24     	; 0x36 <__bad_interrupt>
+  1e:	0b c0       	rjmp	.+22     	; 0x36 <__bad_interrupt>
+  20:	0a c0       	rjmp	.+20     	; 0x36 <__bad_interrupt>
+  22:	09 c0       	rjmp	.+18     	; 0x36 <__bad_interrupt>
+  24:	08 c0       	rjmp	.+16     	; 0x36 <__bad_interrupt>
+
+00000026 <__ctors_end>:
+  26:	11 24       	eor	r1, r1
+  28:	1f be       	out	0x3f, r1	; 63
+  2a:	cf e5       	ldi	r28, 0x5F	; 95
+  2c:	d4 e0       	ldi	r29, 0x04	; 4
+  2e:	de bf       	out	0x3e, r29	; 62
+  30:	cd bf       	out	0x3d, r28	; 61
+  32:	35 d0       	rcall	.+106    	; 0x9e <main>
+  34:	5c c0       	rjmp	.+184    	; 0xee <_exit>
+
+00000036 <__bad_interrupt>:
+  36:	e4 cf       	rjmp	.-56     	; 0x0 <__vectors>
+
+00000038 <command_shift>:
+		//z=a & 0xf0;
+		data_shift(z);
+}
+void command_shift(unsigned char b)					// to give command to LCD like which position we want to show data
+{
+	PORTD = b;
+  38:	82 bb       	out	0x12, r24	; 18
+	PORTD &= ~(1<<rs);
+  3a:	92 98       	cbi	0x12, 2	; 18
+	PORTD |= (1<<en);
+  3c:	93 9a       	sbi	0x12, 3	; 18
+	#else
+		//round up by default
+		__ticks_dc = (uint32_t)(ceil(fabs(__tmp)));
+	#endif
+
+	__builtin_avr_delay_cycles(__ticks_dc);
+  3e:	89 ef       	ldi	r24, 0xF9	; 249
+  40:	90 e0       	ldi	r25, 0x00	; 0
+  42:	01 97       	sbiw	r24, 0x01	; 1
+  44:	f1 f7       	brne	.-4      	; 0x42 <__SREG__+0x3>
+  46:	00 c0       	rjmp	.+0      	; 0x48 <__SREG__+0x9>
+  48:	00 00       	nop
+	_delay_ms(1);
+	PORTD &= ~(1<<en);
+  4a:	93 98       	cbi	0x12, 3	; 18
+  4c:	08 95       	ret
+
+0000004e <command>:
+	command(0x0c);						//to hide cursor
+	//command(0x0e);						//to show cursor
+	//command(0x01);						//to clear LCD completely
+}
+void command(unsigned char a)
+{
+  4e:	cf 93       	push	r28
+  50:	c8 2f       	mov	r28, r24
+	char z;
+	z=a & 0xf0;
+	command_shift(z);
+  52:	80 7f       	andi	r24, 0xF0	; 240
+  54:	f1 df       	rcall	.-30     	; 0x38 <command_shift>
+	z=((a<<4) & 0xf0);
+	//z=a & 0xf0;
+	command_shift(z);
+  56:	8c 2f       	mov	r24, r28
+  58:	82 95       	swap	r24
+  5a:	80 7f       	andi	r24, 0xF0	; 240
+  5c:	ed df       	rcall	.-38     	; 0x38 <command_shift>
+}
+  5e:	cf 91       	pop	r28
+  60:	08 95       	ret
+
+00000062 <lcd_init>:
+
+
+// func declaration
+void lcd_init()							// to initialize LCD
+{
+	command(0x02);						//4bit LCD select
+  62:	82 e0       	ldi	r24, 0x02	; 2
+  64:	f4 df       	rcall	.-24     	; 0x4e <command>
+	command(0x28);						//LCD init basic command(4bit LCD, 2 lines, 5X7
+  66:	88 e2       	ldi	r24, 0x28	; 40
+  68:	f2 df       	rcall	.-28     	; 0x4e <command>
+	command(0x06);						//LCD init basic command
+  6a:	86 e0       	ldi	r24, 0x06	; 6
+  6c:	f0 df       	rcall	.-32     	; 0x4e <command>
+	command(0x0c);						//to hide cursor
+  6e:	8c e0       	ldi	r24, 0x0C	; 12
+  70:	ee df       	rcall	.-36     	; 0x4e <command>
+  72:	08 95       	ret
+
+00000074 <data_shift>:
+	PORTD &= ~(1<<en);
+	
+}
+void data_shift(unsigned char b)
+{
+	PORTD = b;
+  74:	82 bb       	out	0x12, r24	; 18
+	PORTD |= (1<<rs);
+  76:	92 9a       	sbi	0x12, 2	; 18
+	PORTD |= (1<<en);
+  78:	93 9a       	sbi	0x12, 3	; 18
+  7a:	89 ef       	ldi	r24, 0xF9	; 249
+  7c:	90 e0       	ldi	r25, 0x00	; 0
+  7e:	01 97       	sbiw	r24, 0x01	; 1
+  80:	f1 f7       	brne	.-4      	; 0x7e <data_shift+0xa>
+  82:	00 c0       	rjmp	.+0      	; 0x84 <data_shift+0x10>
+  84:	00 00       	nop
+	_delay_ms(1);
+	PORTD &= ~(1<<en);
+  86:	93 98       	cbi	0x12, 3	; 18
+  88:	08 95       	ret
+
+0000008a <data>:
+	z=((a<<4) & 0xf0);
+	//z=a & 0xf0;
+	command_shift(z);
+}
+void data(unsigned char a)
+{
+  8a:	cf 93       	push	r28
+  8c:	c8 2f       	mov	r28, r24
+		char z;
+		z=a & 0xf0;
+		data_shift(z);
+  8e:	80 7f       	andi	r24, 0xF0	; 240
+  90:	f1 df       	rcall	.-30     	; 0x74 <data_shift>
+		z=((a<<4) & 0xf0);
+		//z=a & 0xf0;
+		data_shift(z);
+  92:	8c 2f       	mov	r24, r28
+  94:	82 95       	swap	r24
+  96:	80 7f       	andi	r24, 0xF0	; 240
+  98:	ed df       	rcall	.-38     	; 0x74 <data_shift>
+}
+  9a:	cf 91       	pop	r28
+  9c:	08 95       	ret
+
+0000009e <main>:
+void data_shift(unsigned char b);
+
+int main(void)
+{
+	
+	DDRD=0xff;
+  9e:	8f ef       	ldi	r24, 0xFF	; 255
+  a0:	81 bb       	out	0x11, r24	; 17
+	DDRB=0xff;
+  a2:	87 bb       	out	0x17, r24	; 23
+	PORTB=0x00;		// initialize data port(D4 to D7 as o/p pins)... any change in the port will require change of port name in place of PORTD in command and data function defination as well
+  a4:	18 ba       	out	0x18, r1	; 24
+	
+	lcd_init();
+  a6:	dd df       	rcall	.-70     	; 0x62 <lcd_init>
+  a8:	83 ed       	ldi	r24, 0xD3	; 211
+  aa:	90 e3       	ldi	r25, 0x30	; 48
+  ac:	01 97       	sbiw	r24, 0x01	; 1
+  ae:	f1 f7       	brne	.-4      	; 0xac <main+0xe>
+  b0:	00 c0       	rjmp	.+0      	; 0xb2 <main+0x14>
+  b2:	00 00       	nop
+	while(1)
+	{
+		_delay_ms(50);
+		command(0x80);		//1st row 1st posi
+  b4:	80 e8       	ldi	r24, 0x80	; 128
+  b6:	cb df       	rcall	.-106    	; 0x4e <command>
+		data('A');
+  b8:	81 e4       	ldi	r24, 0x41	; 65
+  ba:	e7 df       	rcall	.-50     	; 0x8a <data>
+		data('D');
+  bc:	84 e4       	ldi	r24, 0x44	; 68
+  be:	e5 df       	rcall	.-54     	; 0x8a <data>
+		data('I');
+  c0:	89 e4       	ldi	r24, 0x49	; 73
+  c2:	e3 df       	rcall	.-58     	; 0x8a <data>
+		data('T');
+  c4:	84 e5       	ldi	r24, 0x54	; 84
+  c6:	e1 df       	rcall	.-62     	; 0x8a <data>
+		data('Y');
+  c8:	89 e5       	ldi	r24, 0x59	; 89
+  ca:	df df       	rcall	.-66     	; 0x8a <data>
+		data('A');
+  cc:	81 e4       	ldi	r24, 0x41	; 65
+  ce:	dd df       	rcall	.-70     	; 0x8a <data>
+		command(0xc0);		//2nd row 1st posi
+  d0:	80 ec       	ldi	r24, 0xC0	; 192
+  d2:	bd df       	rcall	.-134    	; 0x4e <command>
+		data('M');
+  d4:	8d e4       	ldi	r24, 0x4D	; 77
+  d6:	d9 df       	rcall	.-78     	; 0x8a <data>
+		data('U');
+  d8:	85 e5       	ldi	r24, 0x55	; 85
+  da:	d7 df       	rcall	.-82     	; 0x8a <data>
+		data('D');
+  dc:	84 e4       	ldi	r24, 0x44	; 68
+  de:	d5 df       	rcall	.-86     	; 0x8a <data>
+		data('G');
+  e0:	87 e4       	ldi	r24, 0x47	; 71
+  e2:	d3 df       	rcall	.-90     	; 0x8a <data>
+		data('A');
+  e4:	81 e4       	ldi	r24, 0x41	; 65
+  e6:	d1 df       	rcall	.-94     	; 0x8a <data>
+		data('L');
+  e8:	8c e4       	ldi	r24, 0x4C	; 76
+  ea:	cf df       	rcall	.-98     	; 0x8a <data>
+  ec:	dd cf       	rjmp	.-70     	; 0xa8 <main+0xa>
+
+000000ee <_exit>:
+  ee:	f8 94       	cli
+
+000000f0 <__stop_program>:
+  f0:	ff cf       	rjmp	.-2      	; 0xf0 <__stop_program>

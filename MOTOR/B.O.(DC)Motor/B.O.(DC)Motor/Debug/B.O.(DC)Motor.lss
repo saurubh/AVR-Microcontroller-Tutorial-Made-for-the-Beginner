@@ -1,0 +1,104 @@
+
+B.O.(DC)Motor.elf:     file format elf32-avr
+
+Sections:
+Idx Name          Size      VMA       LMA       File off  Algn
+  0 .text         00000060  00000000  00000000  00000074  2**1
+                  CONTENTS, ALLOC, LOAD, READONLY, CODE
+  1 .data         00000000  00800060  00000060  000000d4  2**0
+                  CONTENTS, ALLOC, LOAD, DATA
+  2 .comment      00000030  00000000  00000000  000000d4  2**0
+                  CONTENTS, READONLY
+  3 .debug_aranges 00000020  00000000  00000000  00000104  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  4 .debug_info   000000b9  00000000  00000000  00000124  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  5 .debug_abbrev 0000006b  00000000  00000000  000001dd  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  6 .debug_line   000000c7  00000000  00000000  00000248  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  7 .debug_frame  00000024  00000000  00000000  00000310  2**2
+                  CONTENTS, READONLY, DEBUGGING
+  8 .debug_str    00000122  00000000  00000000  00000334  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  9 .debug_loc    00000069  00000000  00000000  00000456  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 10 .debug_ranges 00000010  00000000  00000000  000004bf  2**0
+                  CONTENTS, READONLY, DEBUGGING
+
+Disassembly of section .text:
+
+00000000 <__vectors>:
+   0:	12 c0       	rjmp	.+36     	; 0x26 <__ctors_end>
+   2:	19 c0       	rjmp	.+50     	; 0x36 <__bad_interrupt>
+   4:	18 c0       	rjmp	.+48     	; 0x36 <__bad_interrupt>
+   6:	17 c0       	rjmp	.+46     	; 0x36 <__bad_interrupt>
+   8:	16 c0       	rjmp	.+44     	; 0x36 <__bad_interrupt>
+   a:	15 c0       	rjmp	.+42     	; 0x36 <__bad_interrupt>
+   c:	14 c0       	rjmp	.+40     	; 0x36 <__bad_interrupt>
+   e:	13 c0       	rjmp	.+38     	; 0x36 <__bad_interrupt>
+  10:	12 c0       	rjmp	.+36     	; 0x36 <__bad_interrupt>
+  12:	11 c0       	rjmp	.+34     	; 0x36 <__bad_interrupt>
+  14:	10 c0       	rjmp	.+32     	; 0x36 <__bad_interrupt>
+  16:	0f c0       	rjmp	.+30     	; 0x36 <__bad_interrupt>
+  18:	0e c0       	rjmp	.+28     	; 0x36 <__bad_interrupt>
+  1a:	0d c0       	rjmp	.+26     	; 0x36 <__bad_interrupt>
+  1c:	0c c0       	rjmp	.+24     	; 0x36 <__bad_interrupt>
+  1e:	0b c0       	rjmp	.+22     	; 0x36 <__bad_interrupt>
+  20:	0a c0       	rjmp	.+20     	; 0x36 <__bad_interrupt>
+  22:	09 c0       	rjmp	.+18     	; 0x36 <__bad_interrupt>
+  24:	08 c0       	rjmp	.+16     	; 0x36 <__bad_interrupt>
+
+00000026 <__ctors_end>:
+  26:	11 24       	eor	r1, r1
+  28:	1f be       	out	0x3f, r1	; 63
+  2a:	cf e5       	ldi	r28, 0x5F	; 95
+  2c:	d4 e0       	ldi	r29, 0x04	; 4
+  2e:	de bf       	out	0x3e, r29	; 62
+  30:	cd bf       	out	0x3d, r28	; 61
+  32:	02 d0       	rcall	.+4      	; 0x38 <main>
+  34:	13 c0       	rjmp	.+38     	; 0x5c <_exit>
+
+00000036 <__bad_interrupt>:
+  36:	e4 cf       	rjmp	.-56     	; 0x0 <__vectors>
+
+00000038 <main>:
+#include <avr/io.h>
+#include <util/delay.h>
+
+int main(void)
+{
+	DDRD=0x0f;		// initialize data port... any change in the port will require change of port name in place of PORTD in command and data function defination as well
+  38:	8f e0       	ldi	r24, 0x0F	; 15
+  3a:	81 bb       	out	0x11, r24	; 17
+	
+	while(1)
+	{
+		int a=PIND & 0xf0;
+  3c:	80 b3       	in	r24, 0x10	; 16
+  3e:	80 7f       	andi	r24, 0xF0	; 240
+  40:	90 e0       	ldi	r25, 0x00	; 0
+		
+		int b=a>>4;
+  42:	9c 01       	movw	r18, r24
+  44:	35 95       	asr	r19
+  46:	27 95       	ror	r18
+  48:	35 95       	asr	r19
+  4a:	27 95       	ror	r18
+  4c:	35 95       	asr	r19
+  4e:	27 95       	ror	r18
+  50:	35 95       	asr	r19
+  52:	27 95       	ror	r18
+		int c=a|b;
+  54:	82 2b       	or	r24, r18
+  56:	93 2b       	or	r25, r19
+
+			PORTD=c;
+  58:	82 bb       	out	0x12, r24	; 18
+  5a:	f0 cf       	rjmp	.-32     	; 0x3c <main+0x4>
+
+0000005c <_exit>:
+  5c:	f8 94       	cli
+
+0000005e <__stop_program>:
+  5e:	ff cf       	rjmp	.-2      	; 0x5e <__stop_program>

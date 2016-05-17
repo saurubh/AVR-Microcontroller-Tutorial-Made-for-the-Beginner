@@ -1,0 +1,967 @@
+
+5LED as Joystick.elf:     file format elf32-avr
+
+Sections:
+Idx Name          Size      VMA       LMA       File off  Algn
+  0 .text         000004ea  00000000  00000000  00000074  2**1
+                  CONTENTS, ALLOC, LOAD, READONLY, CODE
+  1 .data         00000000  00800060  000004ea  0000055e  2**0
+                  CONTENTS, ALLOC, LOAD, DATA
+  2 .comment      00000030  00000000  00000000  0000055e  2**0
+                  CONTENTS, READONLY
+  3 .debug_aranges 00000048  00000000  00000000  0000058e  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  4 .debug_info   0000046b  00000000  00000000  000005d6  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  5 .debug_abbrev 00000166  00000000  00000000  00000a41  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  6 .debug_line   00000224  00000000  00000000  00000ba7  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  7 .debug_frame  00000084  00000000  00000000  00000dcc  2**2
+                  CONTENTS, READONLY, DEBUGGING
+  8 .debug_str    000001ba  00000000  00000000  00000e50  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  9 .debug_loc    000003d6  00000000  00000000  0000100a  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 10 .debug_ranges 00000038  00000000  00000000  000013e0  2**0
+                  CONTENTS, READONLY, DEBUGGING
+
+Disassembly of section .text:
+
+00000000 <__vectors>:
+   0:	12 c0       	rjmp	.+36     	; 0x26 <__ctors_end>
+   2:	19 c0       	rjmp	.+50     	; 0x36 <__bad_interrupt>
+   4:	18 c0       	rjmp	.+48     	; 0x36 <__bad_interrupt>
+   6:	17 c0       	rjmp	.+46     	; 0x36 <__bad_interrupt>
+   8:	16 c0       	rjmp	.+44     	; 0x36 <__bad_interrupt>
+   a:	15 c0       	rjmp	.+42     	; 0x36 <__bad_interrupt>
+   c:	14 c0       	rjmp	.+40     	; 0x36 <__bad_interrupt>
+   e:	13 c0       	rjmp	.+38     	; 0x36 <__bad_interrupt>
+  10:	12 c0       	rjmp	.+36     	; 0x36 <__bad_interrupt>
+  12:	11 c0       	rjmp	.+34     	; 0x36 <__bad_interrupt>
+  14:	10 c0       	rjmp	.+32     	; 0x36 <__bad_interrupt>
+  16:	0f c0       	rjmp	.+30     	; 0x36 <__bad_interrupt>
+  18:	0e c0       	rjmp	.+28     	; 0x36 <__bad_interrupt>
+  1a:	0d c0       	rjmp	.+26     	; 0x36 <__bad_interrupt>
+  1c:	0c c0       	rjmp	.+24     	; 0x36 <__bad_interrupt>
+  1e:	0b c0       	rjmp	.+22     	; 0x36 <__bad_interrupt>
+  20:	0a c0       	rjmp	.+20     	; 0x36 <__bad_interrupt>
+  22:	09 c0       	rjmp	.+18     	; 0x36 <__bad_interrupt>
+  24:	08 c0       	rjmp	.+16     	; 0x36 <__bad_interrupt>
+
+00000026 <__ctors_end>:
+  26:	11 24       	eor	r1, r1
+  28:	1f be       	out	0x3f, r1	; 63
+  2a:	cf e5       	ldi	r28, 0x5F	; 95
+  2c:	d4 e0       	ldi	r29, 0x04	; 4
+  2e:	de bf       	out	0x3e, r29	; 62
+  30:	cd bf       	out	0x3d, r28	; 61
+  32:	35 d0       	rcall	.+106    	; 0x9e <main>
+  34:	58 c2       	rjmp	.+1200   	; 0x4e6 <_exit>
+
+00000036 <__bad_interrupt>:
+  36:	e4 cf       	rjmp	.-56     	; 0x0 <__vectors>
+
+00000038 <command_shift>:
+	//z=a & 0xf0;
+	data_shift(z);
+}
+void command_shift(unsigned char b)					// to give command to LCD like which position we want to show data
+{
+	PORTD = b;
+  38:	82 bb       	out	0x12, r24	; 18
+	PORTD &= ~(1<<rs);
+  3a:	90 98       	cbi	0x12, 0	; 18
+	PORTD |= (1<<en);
+  3c:	91 9a       	sbi	0x12, 1	; 18
+	#else
+		//round up by default
+		__ticks_dc = (uint32_t)(ceil(fabs(__tmp)));
+	#endif
+
+	__builtin_avr_delay_cycles(__ticks_dc);
+  3e:	89 ef       	ldi	r24, 0xF9	; 249
+  40:	90 e0       	ldi	r25, 0x00	; 0
+  42:	01 97       	sbiw	r24, 0x01	; 1
+  44:	f1 f7       	brne	.-4      	; 0x42 <__SREG__+0x3>
+  46:	00 c0       	rjmp	.+0      	; 0x48 <__SREG__+0x9>
+  48:	00 00       	nop
+	_delay_ms(1);
+	PORTD &= ~(1<<en);
+  4a:	91 98       	cbi	0x12, 1	; 18
+  4c:	08 95       	ret
+
+0000004e <command>:
+	command(0x0c);						//to hide cursor
+	//command(0x0e);						//to show cursor
+	//command(0x01);						//to clear LCD completely
+}
+void command(unsigned char a)
+{
+  4e:	cf 93       	push	r28
+  50:	c8 2f       	mov	r28, r24
+	char z;
+	z=a & 0xf0;
+	command_shift(z);
+  52:	80 7f       	andi	r24, 0xF0	; 240
+  54:	f1 df       	rcall	.-30     	; 0x38 <command_shift>
+	z=((a<<4) & 0xf0);
+	//z=a & 0xf0;
+	command_shift(z);
+  56:	8c 2f       	mov	r24, r28
+  58:	82 95       	swap	r24
+  5a:	80 7f       	andi	r24, 0xF0	; 240
+  5c:	ed df       	rcall	.-38     	; 0x38 <command_shift>
+}
+  5e:	cf 91       	pop	r28
+  60:	08 95       	ret
+
+00000062 <lcd_init>:
+
+
+// func declaration
+void lcd_init()							// to initialize LCD
+{
+	command(0x02);						//4bit LCD select
+  62:	82 e0       	ldi	r24, 0x02	; 2
+  64:	f4 df       	rcall	.-24     	; 0x4e <command>
+	command(0x28);						//LCD init basic command(4bit LCD, 2 lines, 5X7
+  66:	88 e2       	ldi	r24, 0x28	; 40
+  68:	f2 df       	rcall	.-28     	; 0x4e <command>
+	command(0x06);						//LCD init basic command
+  6a:	86 e0       	ldi	r24, 0x06	; 6
+  6c:	f0 df       	rcall	.-32     	; 0x4e <command>
+	command(0x0c);						//to hide cursor
+  6e:	8c e0       	ldi	r24, 0x0C	; 12
+  70:	ee df       	rcall	.-36     	; 0x4e <command>
+  72:	08 95       	ret
+
+00000074 <data_shift>:
+	PORTD &= ~(1<<en);
+	
+}
+void data_shift(unsigned char b)
+{
+	PORTD = b;  
+  74:	82 bb       	out	0x12, r24	; 18
+	PORTD |= (1<<rs);
+  76:	90 9a       	sbi	0x12, 0	; 18
+	PORTD |= (1<<en);
+  78:	91 9a       	sbi	0x12, 1	; 18
+  7a:	89 ef       	ldi	r24, 0xF9	; 249
+  7c:	90 e0       	ldi	r25, 0x00	; 0
+  7e:	01 97       	sbiw	r24, 0x01	; 1
+  80:	f1 f7       	brne	.-4      	; 0x7e <data_shift+0xa>
+  82:	00 c0       	rjmp	.+0      	; 0x84 <data_shift+0x10>
+  84:	00 00       	nop
+	_delay_ms(1);
+	PORTD &= ~(1<<en);
+  86:	91 98       	cbi	0x12, 1	; 18
+  88:	08 95       	ret
+
+0000008a <data>:
+	z=((a<<4) & 0xf0);
+	//z=a & 0xf0;
+	command_shift(z);
+}
+void data(unsigned char a)
+{
+  8a:	cf 93       	push	r28
+  8c:	c8 2f       	mov	r28, r24
+	char z;
+	z=a & 0xf0;
+	data_shift(z);
+  8e:	80 7f       	andi	r24, 0xF0	; 240
+  90:	f1 df       	rcall	.-30     	; 0x74 <data_shift>
+	z=((a<<4) & 0xf0);
+	//z=a & 0xf0;
+	data_shift(z);
+  92:	8c 2f       	mov	r24, r28
+  94:	82 95       	swap	r24
+  96:	80 7f       	andi	r24, 0xF0	; 240
+  98:	ed df       	rcall	.-38     	; 0x74 <data_shift>
+}
+  9a:	cf 91       	pop	r28
+  9c:	08 95       	ret
+
+0000009e <main>:
+void data_shift(unsigned char b);
+
+int main(void)
+{
+	
+	DDRD=0xff;		// initialize data port(D4 to D7 as o/p pins)... any change in the port will require change of port name in place of PORTD in command and data function defination as well
+  9e:	8f ef       	ldi	r24, 0xFF	; 255
+  a0:	81 bb       	out	0x11, r24	; 17
+	DDRB=0xff;
+  a2:	87 bb       	out	0x17, r24	; 23
+	int a,b;
+	int x,y,z;
+//	int adc0,adc1;
+	lcd_init();
+  a4:	de df       	rcall	.-68     	; 0x62 <lcd_init>
+	{
+// 		ADMUX=0x45;
+// 		adc0=ADC;
+
+		// channel 0 i.e. ADC0
+		for(int i=0;i<3;i++)
+  a6:	c0 e0       	ldi	r28, 0x00	; 0
+  a8:	d0 e0       	ldi	r29, 0x00	; 0
+  aa:	31 2c       	mov	r3, r1
+  ac:	21 2c       	mov	r2, r1
+				{
+					data('-');
+					a=a*(-1);
+				}
+				
+				b=(a/100)+48;
+  ae:	0f 2e       	mov	r0, r31
+  b0:	f4 e6       	ldi	r31, 0x64	; 100
+  b2:	6f 2e       	mov	r6, r31
+  b4:	71 2c       	mov	r7, r1
+  b6:	f0 2d       	mov	r31, r0
+				data(b);
+				a=a%100;							// we devied by 2 as LM35 gives double value of the actual value i.e.
+				b=(a/10)+48;
+  b8:	0f 2e       	mov	r0, r31
+  ba:	fa e0       	ldi	r31, 0x0A	; 10
+  bc:	4f 2e       	mov	r4, r31
+  be:	51 2c       	mov	r5, r1
+  c0:	f0 2d       	mov	r31, r0
+  c2:	c1 c0       	rjmp	.+386    	; 0x246 <main+0x1a8>
+// 		adc0=ADC;
+
+		// channel 0 i.e. ADC0
+		for(int i=0;i<3;i++)
+		{
+			if(i==0)
+  c4:	20 97       	sbiw	r28, 0x00	; 0
+  c6:	b1 f5       	brne	.+108    	; 0x134 <main+0x96>
+ 			{
+				ADMUX=0x40;					// selection of channel 0 i.e. ADC0
+  c8:	80 e4       	ldi	r24, 0x40	; 64
+  ca:	87 b9       	out	0x07, r24	; 7
+				command(0x80);				// position at with its value will be shown on LCD
+  cc:	80 e8       	ldi	r24, 0x80	; 128
+  ce:	bf df       	rcall	.-130    	; 0x4e <command>
+				ADCSRA|=(1<<ADEN)|(1<<ADSC)|(1<<ADFR)|(1<<ADPS2)|(1<<ADPS1)|(1<<ADPS0);
+  d0:	86 b1       	in	r24, 0x06	; 6
+  d2:	87 6e       	ori	r24, 0xE7	; 231
+  d4:	86 b9       	out	0x06, r24	; 6
+				while((ADCSRA & (1<<ADIF))==0);		 //it waits until condi. satisfies i.e. remains in while loop until conversion completes
+  d6:	34 9b       	sbis	0x06, 4	; 6
+  d8:	fe cf       	rjmp	.-4      	; 0xd6 <main+0x38>
+				// while(~(ADCSRA & (1<<ADIF))); can also be written as ADIF will be 0 untill conversion continues and and ADIF becomes 1 when conversion completes and hence it terminates from the loop
+
+				a=ADC;
+  da:	64 b1       	in	r22, 0x04	; 4
+  dc:	75 b1       	in	r23, 0x05	; 5
+				a=a*.490;
+  de:	88 27       	eor	r24, r24
+  e0:	77 fd       	sbrc	r23, 7
+  e2:	80 95       	com	r24
+  e4:	98 2f       	mov	r25, r24
+  e6:	e9 d0       	rcall	.+466    	; 0x2ba <__floatsisf>
+  e8:	28 e4       	ldi	r18, 0x48	; 72
+  ea:	31 ee       	ldi	r19, 0xE1	; 225
+  ec:	4a ef       	ldi	r20, 0xFA	; 250
+  ee:	5e e3       	ldi	r21, 0x3E	; 62
+  f0:	48 d1       	rcall	.+656    	; 0x382 <__mulsf3>
+  f2:	b0 d0       	rcall	.+352    	; 0x254 <__fixsfsi>
+  f4:	4b 01       	movw	r8, r22
+  f6:	5c 01       	movw	r10, r24
+  f8:	8b 01       	movw	r16, r22
+				x=a;
+				
+				if(a>=0)
+  fa:	77 23       	and	r23, r23
+  fc:	24 f0       	brlt	.+8      	; 0x106 <main+0x68>
+				data('+');
+  fe:	8b e2       	ldi	r24, 0x2B	; 43
+ 100:	c4 df       	rcall	.-120    	; 0x8a <data>
+				ADCSRA|=(1<<ADEN)|(1<<ADSC)|(1<<ADFR)|(1<<ADPS2)|(1<<ADPS1)|(1<<ADPS0);
+				while((ADCSRA & (1<<ADIF))==0);		 //it waits until condi. satisfies i.e. remains in while loop until conversion completes
+				// while(~(ADCSRA & (1<<ADIF))); can also be written as ADIF will be 0 untill conversion continues and and ADIF becomes 1 when conversion completes and hence it terminates from the loop
+
+				a=ADC;
+				a=a*.490;
+ 102:	c4 01       	movw	r24, r8
+ 104:	06 c0       	rjmp	.+12     	; 0x112 <main+0x74>
+				
+				if(a>=0)
+				data('+');
+				else
+				{
+					data('-');
+ 106:	8d e2       	ldi	r24, 0x2D	; 45
+ 108:	c0 df       	rcall	.-128    	; 0x8a <data>
+					a=a*(-1);
+ 10a:	88 27       	eor	r24, r24
+ 10c:	99 27       	eor	r25, r25
+ 10e:	88 19       	sub	r24, r8
+ 110:	99 09       	sbc	r25, r9
+				}
+				
+				b=(a/100)+48;
+ 112:	b3 01       	movw	r22, r6
+ 114:	c1 d1       	rcall	.+898    	; 0x498 <__divmodhi4>
+ 116:	5c 01       	movw	r10, r24
+				data(b);
+ 118:	80 e3       	ldi	r24, 0x30	; 48
+ 11a:	86 0f       	add	r24, r22
+ 11c:	b6 df       	rcall	.-148    	; 0x8a <data>
+				a=a%100;							// we devied by 2 as LM35 gives double value of the actual value i.e.
+				b=(a/10)+48;
+ 11e:	c5 01       	movw	r24, r10
+ 120:	b2 01       	movw	r22, r4
+ 122:	ba d1       	rcall	.+884    	; 0x498 <__divmodhi4>
+ 124:	b8 2e       	mov	r11, r24
+				data(b);
+ 126:	80 e3       	ldi	r24, 0x30	; 48
+ 128:	86 0f       	add	r24, r22
+ 12a:	af df       	rcall	.-162    	; 0x8a <data>
+				b=(a%10)+48;
+				data(b);
+ 12c:	80 e3       	ldi	r24, 0x30	; 48
+ 12e:	8b 0d       	add	r24, r11
+ 130:	ac df       	rcall	.-168    	; 0x8a <data>
+ 132:	6e c0       	rjmp	.+220    	; 0x210 <main+0x172>
+			}
+			else if(i==1)
+ 134:	c1 30       	cpi	r28, 0x01	; 1
+ 136:	d1 05       	cpc	r29, r1
+ 138:	b1 f5       	brne	.+108    	; 0x1a6 <main+0x108>
+			{
+				ADMUX=0x41;					// selection of channel 1 i.e. ADC1
+ 13a:	81 e4       	ldi	r24, 0x41	; 65
+ 13c:	87 b9       	out	0x07, r24	; 7
+				command(0x86);				// position at with its value will be shown on LCD
+ 13e:	86 e8       	ldi	r24, 0x86	; 134
+ 140:	86 df       	rcall	.-244    	; 0x4e <command>
+				ADCSRA|=(1<<ADEN)|(1<<ADSC)|(1<<ADFR)|(1<<ADPS2)|(1<<ADPS1)|(1<<ADPS0);
+ 142:	86 b1       	in	r24, 0x06	; 6
+ 144:	87 6e       	ori	r24, 0xE7	; 231
+ 146:	86 b9       	out	0x06, r24	; 6
+				while((ADCSRA & (1<<ADIF))==0);		 //it waits until condi. satisfies i.e. remains in while loop until conversion completes
+ 148:	34 9b       	sbis	0x06, 4	; 6
+ 14a:	fe cf       	rjmp	.-4      	; 0x148 <main+0xaa>
+				// while(~(ADCSRA & (1<<ADIF))); can also be written as ADIF will be 0 untill conversion continues and and ADIF becomes 1 when conversion completes and hence it terminates from the loop
+
+				a=ADC;
+ 14c:	64 b1       	in	r22, 0x04	; 4
+ 14e:	75 b1       	in	r23, 0x05	; 5
+				a=a*.490;
+ 150:	88 27       	eor	r24, r24
+ 152:	77 fd       	sbrc	r23, 7
+ 154:	80 95       	com	r24
+ 156:	98 2f       	mov	r25, r24
+ 158:	b0 d0       	rcall	.+352    	; 0x2ba <__floatsisf>
+ 15a:	28 e4       	ldi	r18, 0x48	; 72
+ 15c:	31 ee       	ldi	r19, 0xE1	; 225
+ 15e:	4a ef       	ldi	r20, 0xFA	; 250
+ 160:	5e e3       	ldi	r21, 0x3E	; 62
+ 162:	0f d1       	rcall	.+542    	; 0x382 <__mulsf3>
+ 164:	77 d0       	rcall	.+238    	; 0x254 <__fixsfsi>
+ 166:	4b 01       	movw	r8, r22
+ 168:	5c 01       	movw	r10, r24
+ 16a:	7b 01       	movw	r14, r22
+				y=a;
+				
+				if(a>=0)
+ 16c:	77 23       	and	r23, r23
+ 16e:	24 f0       	brlt	.+8      	; 0x178 <main+0xda>
+				data('+');
+ 170:	8b e2       	ldi	r24, 0x2B	; 43
+ 172:	8b df       	rcall	.-234    	; 0x8a <data>
+				ADCSRA|=(1<<ADEN)|(1<<ADSC)|(1<<ADFR)|(1<<ADPS2)|(1<<ADPS1)|(1<<ADPS0);
+				while((ADCSRA & (1<<ADIF))==0);		 //it waits until condi. satisfies i.e. remains in while loop until conversion completes
+				// while(~(ADCSRA & (1<<ADIF))); can also be written as ADIF will be 0 untill conversion continues and and ADIF becomes 1 when conversion completes and hence it terminates from the loop
+
+				a=ADC;
+				a=a*.490;
+ 174:	c4 01       	movw	r24, r8
+ 176:	06 c0       	rjmp	.+12     	; 0x184 <main+0xe6>
+				
+				if(a>=0)
+				data('+');
+				else
+				{
+					data('-');
+ 178:	8d e2       	ldi	r24, 0x2D	; 45
+ 17a:	87 df       	rcall	.-242    	; 0x8a <data>
+					a=a*(-1);
+ 17c:	88 27       	eor	r24, r24
+ 17e:	99 27       	eor	r25, r25
+ 180:	88 19       	sub	r24, r8
+ 182:	99 09       	sbc	r25, r9
+				}
+				
+				b=(a/100)+48;
+ 184:	b3 01       	movw	r22, r6
+ 186:	88 d1       	rcall	.+784    	; 0x498 <__divmodhi4>
+ 188:	5c 01       	movw	r10, r24
+				data(b);
+ 18a:	80 e3       	ldi	r24, 0x30	; 48
+ 18c:	86 0f       	add	r24, r22
+ 18e:	7d df       	rcall	.-262    	; 0x8a <data>
+				a=a%100;							// we devied by 2 as LM35 gives double value of the actual value i.e.
+				b=(a/10)+48;
+ 190:	c5 01       	movw	r24, r10
+ 192:	b2 01       	movw	r22, r4
+ 194:	81 d1       	rcall	.+770    	; 0x498 <__divmodhi4>
+ 196:	b8 2e       	mov	r11, r24
+				data(b);
+ 198:	80 e3       	ldi	r24, 0x30	; 48
+ 19a:	86 0f       	add	r24, r22
+ 19c:	76 df       	rcall	.-276    	; 0x8a <data>
+				b=(a%10)+48;
+				data(b);
+ 19e:	80 e3       	ldi	r24, 0x30	; 48
+ 1a0:	8b 0d       	add	r24, r11
+ 1a2:	73 df       	rcall	.-282    	; 0x8a <data>
+ 1a4:	35 c0       	rjmp	.+106    	; 0x210 <main+0x172>
+			}
+			else
+			{
+				ADMUX=0x42;					// selection of channel 2 i.e. ADC2
+ 1a6:	82 e4       	ldi	r24, 0x42	; 66
+ 1a8:	87 b9       	out	0x07, r24	; 7
+				command(0x8c);				// position at with its value will be shown on LCD
+ 1aa:	8c e8       	ldi	r24, 0x8C	; 140
+ 1ac:	50 df       	rcall	.-352    	; 0x4e <command>
+				ADCSRA|=(1<<ADEN)|(1<<ADSC)|(1<<ADFR)|(1<<ADPS2)|(1<<ADPS1)|(1<<ADPS0);
+ 1ae:	86 b1       	in	r24, 0x06	; 6
+ 1b0:	87 6e       	ori	r24, 0xE7	; 231
+ 1b2:	86 b9       	out	0x06, r24	; 6
+				while((ADCSRA & (1<<ADIF))==0);		 //it waits until condi. satisfies i.e. remains in while loop until conversion completes
+ 1b4:	34 9b       	sbis	0x06, 4	; 6
+ 1b6:	fe cf       	rjmp	.-4      	; 0x1b4 <main+0x116>
+				// while(~(ADCSRA & (1<<ADIF))); can also be written as ADIF will be 0 untill conversion continues and and ADIF becomes 1 when conversion completes and hence it terminates from the loop
+
+				
+				a=ADC;
+ 1b8:	64 b1       	in	r22, 0x04	; 4
+ 1ba:	75 b1       	in	r23, 0x05	; 5
+				a=a*.490;
+ 1bc:	88 27       	eor	r24, r24
+ 1be:	77 fd       	sbrc	r23, 7
+ 1c0:	80 95       	com	r24
+ 1c2:	98 2f       	mov	r25, r24
+ 1c4:	7a d0       	rcall	.+244    	; 0x2ba <__floatsisf>
+ 1c6:	28 e4       	ldi	r18, 0x48	; 72
+ 1c8:	31 ee       	ldi	r19, 0xE1	; 225
+ 1ca:	4a ef       	ldi	r20, 0xFA	; 250
+ 1cc:	5e e3       	ldi	r21, 0x3E	; 62
+ 1ce:	d9 d0       	rcall	.+434    	; 0x382 <__mulsf3>
+ 1d0:	41 d0       	rcall	.+130    	; 0x254 <__fixsfsi>
+ 1d2:	4b 01       	movw	r8, r22
+ 1d4:	5c 01       	movw	r10, r24
+ 1d6:	6b 01       	movw	r12, r22
+				z=a;
+				
+				if(a>=0)
+ 1d8:	77 23       	and	r23, r23
+ 1da:	24 f0       	brlt	.+8      	; 0x1e4 <main+0x146>
+				data('+');
+ 1dc:	8b e2       	ldi	r24, 0x2B	; 43
+ 1de:	55 df       	rcall	.-342    	; 0x8a <data>
+				while((ADCSRA & (1<<ADIF))==0);		 //it waits until condi. satisfies i.e. remains in while loop until conversion completes
+				// while(~(ADCSRA & (1<<ADIF))); can also be written as ADIF will be 0 untill conversion continues and and ADIF becomes 1 when conversion completes and hence it terminates from the loop
+
+				
+				a=ADC;
+				a=a*.490;
+ 1e0:	c4 01       	movw	r24, r8
+ 1e2:	06 c0       	rjmp	.+12     	; 0x1f0 <main+0x152>
+				
+				if(a>=0)
+				data('+');
+				else
+				{
+					data('-');
+ 1e4:	8d e2       	ldi	r24, 0x2D	; 45
+ 1e6:	51 df       	rcall	.-350    	; 0x8a <data>
+					a=a*(-1);
+ 1e8:	88 27       	eor	r24, r24
+ 1ea:	99 27       	eor	r25, r25
+ 1ec:	88 19       	sub	r24, r8
+ 1ee:	99 09       	sbc	r25, r9
+				}
+				
+				b=(a/100)+48;
+ 1f0:	b3 01       	movw	r22, r6
+ 1f2:	52 d1       	rcall	.+676    	; 0x498 <__divmodhi4>
+ 1f4:	5c 01       	movw	r10, r24
+				data(b);
+ 1f6:	80 e3       	ldi	r24, 0x30	; 48
+ 1f8:	86 0f       	add	r24, r22
+ 1fa:	47 df       	rcall	.-370    	; 0x8a <data>
+				a=a%100;							// we devied by 2 as LM35 gives double value of the actual value i.e.
+				b=(a/10)+48;
+ 1fc:	c5 01       	movw	r24, r10
+ 1fe:	b2 01       	movw	r22, r4
+ 200:	4b d1       	rcall	.+662    	; 0x498 <__divmodhi4>
+ 202:	b8 2e       	mov	r11, r24
+				data(b);
+ 204:	80 e3       	ldi	r24, 0x30	; 48
+ 206:	86 0f       	add	r24, r22
+ 208:	40 df       	rcall	.-384    	; 0x8a <data>
+				b=(a%10)+48;
+				data(b);
+ 20a:	80 e3       	ldi	r24, 0x30	; 48
+ 20c:	8b 0d       	add	r24, r11
+ 20e:	3d df       	rcall	.-390    	; 0x8a <data>
+ 			}
+			
+			
+// condition for LED glow 	
+		//reset all initially
+				PORTB=0x00;
+ 210:	18 ba       	out	0x18, r1	; 24
+		// fwd
+			if(x>60)
+ 212:	0d 33       	cpi	r16, 0x3D	; 61
+ 214:	11 05       	cpc	r17, r1
+ 216:	14 f0       	brlt	.+4      	; 0x21c <main+0x17e>
+			{
+				PORTB|=0x01;								//LED 1
+ 218:	c0 9a       	sbi	0x18, 0	; 24
+ 21a:	04 c0       	rjmp	.+8      	; 0x224 <main+0x186>
+			}			
+		//reverse
+			else if(x<50)
+ 21c:	02 33       	cpi	r16, 0x32	; 50
+ 21e:	11 05       	cpc	r17, r1
+ 220:	0c f4       	brge	.+2      	; 0x224 <main+0x186>
+			{
+				PORTB|=0x02;								//LED 2
+ 222:	c1 9a       	sbi	0x18, 1	; 24
+			}
+			
+		//right
+			if(y>60)
+ 224:	8d e3       	ldi	r24, 0x3D	; 61
+ 226:	e8 16       	cp	r14, r24
+ 228:	f1 04       	cpc	r15, r1
+ 22a:	14 f0       	brlt	.+4      	; 0x230 <main+0x192>
+			{
+				PORTB|=0x08;								//LED 4							
+ 22c:	c3 9a       	sbi	0x18, 3	; 24
+ 22e:	05 c0       	rjmp	.+10     	; 0x23a <main+0x19c>
+			}			
+		//left
+			else if(y<50)
+ 230:	82 e3       	ldi	r24, 0x32	; 50
+ 232:	e8 16       	cp	r14, r24
+ 234:	f1 04       	cpc	r15, r1
+ 236:	0c f4       	brge	.+2      	; 0x23a <main+0x19c>
+			{
+				PORTB|=0x04;								//LED 3
+ 238:	c2 9a       	sbi	0x18, 2	; 24
+			}
+			
+		//up/down
+			if(z<50 || z>60)
+ 23a:	c6 01       	movw	r24, r12
+ 23c:	c2 97       	sbiw	r24, 0x32	; 50
+ 23e:	0b 97       	sbiw	r24, 0x0b	; 11
+ 240:	08 f0       	brcs	.+2      	; 0x244 <main+0x1a6>
+			{
+				PORTB|=0x10;								//LED 5
+ 242:	c4 9a       	sbi	0x18, 4	; 24
+	{
+// 		ADMUX=0x45;
+// 		adc0=ADC;
+
+		// channel 0 i.e. ADC0
+		for(int i=0;i<3;i++)
+ 244:	21 96       	adiw	r28, 0x01	; 1
+ 246:	c3 30       	cpi	r28, 0x03	; 3
+ 248:	d1 05       	cpc	r29, r1
+ 24a:	0c f4       	brge	.+2      	; 0x24e <main+0x1b0>
+ 24c:	3b cf       	rjmp	.-394    	; 0xc4 <main+0x26>
+ 24e:	c3 2d       	mov	r28, r3
+ 250:	d2 2d       	mov	r29, r2
+ 252:	3a cf       	rjmp	.-396    	; 0xc8 <main+0x2a>
+
+00000254 <__fixsfsi>:
+ 254:	04 d0       	rcall	.+8      	; 0x25e <__fixunssfsi>
+ 256:	68 94       	set
+ 258:	b1 11       	cpse	r27, r1
+ 25a:	8d c0       	rjmp	.+282    	; 0x376 <__fp_szero>
+ 25c:	08 95       	ret
+
+0000025e <__fixunssfsi>:
+ 25e:	70 d0       	rcall	.+224    	; 0x340 <__fp_splitA>
+ 260:	88 f0       	brcs	.+34     	; 0x284 <__fixunssfsi+0x26>
+ 262:	9f 57       	subi	r25, 0x7F	; 127
+ 264:	90 f0       	brcs	.+36     	; 0x28a <__fixunssfsi+0x2c>
+ 266:	b9 2f       	mov	r27, r25
+ 268:	99 27       	eor	r25, r25
+ 26a:	b7 51       	subi	r27, 0x17	; 23
+ 26c:	a0 f0       	brcs	.+40     	; 0x296 <__fixunssfsi+0x38>
+ 26e:	d1 f0       	breq	.+52     	; 0x2a4 <__fixunssfsi+0x46>
+ 270:	66 0f       	add	r22, r22
+ 272:	77 1f       	adc	r23, r23
+ 274:	88 1f       	adc	r24, r24
+ 276:	99 1f       	adc	r25, r25
+ 278:	1a f0       	brmi	.+6      	; 0x280 <__fixunssfsi+0x22>
+ 27a:	ba 95       	dec	r27
+ 27c:	c9 f7       	brne	.-14     	; 0x270 <__fixunssfsi+0x12>
+ 27e:	12 c0       	rjmp	.+36     	; 0x2a4 <__fixunssfsi+0x46>
+ 280:	b1 30       	cpi	r27, 0x01	; 1
+ 282:	81 f0       	breq	.+32     	; 0x2a4 <__fixunssfsi+0x46>
+ 284:	77 d0       	rcall	.+238    	; 0x374 <__fp_zero>
+ 286:	b1 e0       	ldi	r27, 0x01	; 1
+ 288:	08 95       	ret
+ 28a:	74 c0       	rjmp	.+232    	; 0x374 <__fp_zero>
+ 28c:	67 2f       	mov	r22, r23
+ 28e:	78 2f       	mov	r23, r24
+ 290:	88 27       	eor	r24, r24
+ 292:	b8 5f       	subi	r27, 0xF8	; 248
+ 294:	39 f0       	breq	.+14     	; 0x2a4 <__fixunssfsi+0x46>
+ 296:	b9 3f       	cpi	r27, 0xF9	; 249
+ 298:	cc f3       	brlt	.-14     	; 0x28c <__fixunssfsi+0x2e>
+ 29a:	86 95       	lsr	r24
+ 29c:	77 95       	ror	r23
+ 29e:	67 95       	ror	r22
+ 2a0:	b3 95       	inc	r27
+ 2a2:	d9 f7       	brne	.-10     	; 0x29a <__fixunssfsi+0x3c>
+ 2a4:	3e f4       	brtc	.+14     	; 0x2b4 <__fixunssfsi+0x56>
+ 2a6:	90 95       	com	r25
+ 2a8:	80 95       	com	r24
+ 2aa:	70 95       	com	r23
+ 2ac:	61 95       	neg	r22
+ 2ae:	7f 4f       	sbci	r23, 0xFF	; 255
+ 2b0:	8f 4f       	sbci	r24, 0xFF	; 255
+ 2b2:	9f 4f       	sbci	r25, 0xFF	; 255
+ 2b4:	08 95       	ret
+
+000002b6 <__floatunsisf>:
+ 2b6:	e8 94       	clt
+ 2b8:	09 c0       	rjmp	.+18     	; 0x2cc <__floatsisf+0x12>
+
+000002ba <__floatsisf>:
+ 2ba:	97 fb       	bst	r25, 7
+ 2bc:	3e f4       	brtc	.+14     	; 0x2cc <__floatsisf+0x12>
+ 2be:	90 95       	com	r25
+ 2c0:	80 95       	com	r24
+ 2c2:	70 95       	com	r23
+ 2c4:	61 95       	neg	r22
+ 2c6:	7f 4f       	sbci	r23, 0xFF	; 255
+ 2c8:	8f 4f       	sbci	r24, 0xFF	; 255
+ 2ca:	9f 4f       	sbci	r25, 0xFF	; 255
+ 2cc:	99 23       	and	r25, r25
+ 2ce:	a9 f0       	breq	.+42     	; 0x2fa <__floatsisf+0x40>
+ 2d0:	f9 2f       	mov	r31, r25
+ 2d2:	96 e9       	ldi	r25, 0x96	; 150
+ 2d4:	bb 27       	eor	r27, r27
+ 2d6:	93 95       	inc	r25
+ 2d8:	f6 95       	lsr	r31
+ 2da:	87 95       	ror	r24
+ 2dc:	77 95       	ror	r23
+ 2de:	67 95       	ror	r22
+ 2e0:	b7 95       	ror	r27
+ 2e2:	f1 11       	cpse	r31, r1
+ 2e4:	f8 cf       	rjmp	.-16     	; 0x2d6 <__floatsisf+0x1c>
+ 2e6:	fa f4       	brpl	.+62     	; 0x326 <__floatsisf+0x6c>
+ 2e8:	bb 0f       	add	r27, r27
+ 2ea:	11 f4       	brne	.+4      	; 0x2f0 <__floatsisf+0x36>
+ 2ec:	60 ff       	sbrs	r22, 0
+ 2ee:	1b c0       	rjmp	.+54     	; 0x326 <__floatsisf+0x6c>
+ 2f0:	6f 5f       	subi	r22, 0xFF	; 255
+ 2f2:	7f 4f       	sbci	r23, 0xFF	; 255
+ 2f4:	8f 4f       	sbci	r24, 0xFF	; 255
+ 2f6:	9f 4f       	sbci	r25, 0xFF	; 255
+ 2f8:	16 c0       	rjmp	.+44     	; 0x326 <__floatsisf+0x6c>
+ 2fa:	88 23       	and	r24, r24
+ 2fc:	11 f0       	breq	.+4      	; 0x302 <__floatsisf+0x48>
+ 2fe:	96 e9       	ldi	r25, 0x96	; 150
+ 300:	11 c0       	rjmp	.+34     	; 0x324 <__floatsisf+0x6a>
+ 302:	77 23       	and	r23, r23
+ 304:	21 f0       	breq	.+8      	; 0x30e <__floatsisf+0x54>
+ 306:	9e e8       	ldi	r25, 0x8E	; 142
+ 308:	87 2f       	mov	r24, r23
+ 30a:	76 2f       	mov	r23, r22
+ 30c:	05 c0       	rjmp	.+10     	; 0x318 <__floatsisf+0x5e>
+ 30e:	66 23       	and	r22, r22
+ 310:	71 f0       	breq	.+28     	; 0x32e <__floatsisf+0x74>
+ 312:	96 e8       	ldi	r25, 0x86	; 134
+ 314:	86 2f       	mov	r24, r22
+ 316:	70 e0       	ldi	r23, 0x00	; 0
+ 318:	60 e0       	ldi	r22, 0x00	; 0
+ 31a:	2a f0       	brmi	.+10     	; 0x326 <__floatsisf+0x6c>
+ 31c:	9a 95       	dec	r25
+ 31e:	66 0f       	add	r22, r22
+ 320:	77 1f       	adc	r23, r23
+ 322:	88 1f       	adc	r24, r24
+ 324:	da f7       	brpl	.-10     	; 0x31c <__floatsisf+0x62>
+ 326:	88 0f       	add	r24, r24
+ 328:	96 95       	lsr	r25
+ 32a:	87 95       	ror	r24
+ 32c:	97 f9       	bld	r25, 7
+ 32e:	08 95       	ret
+
+00000330 <__fp_split3>:
+ 330:	57 fd       	sbrc	r21, 7
+ 332:	90 58       	subi	r25, 0x80	; 128
+ 334:	44 0f       	add	r20, r20
+ 336:	55 1f       	adc	r21, r21
+ 338:	59 f0       	breq	.+22     	; 0x350 <__fp_splitA+0x10>
+ 33a:	5f 3f       	cpi	r21, 0xFF	; 255
+ 33c:	71 f0       	breq	.+28     	; 0x35a <__fp_splitA+0x1a>
+ 33e:	47 95       	ror	r20
+
+00000340 <__fp_splitA>:
+ 340:	88 0f       	add	r24, r24
+ 342:	97 fb       	bst	r25, 7
+ 344:	99 1f       	adc	r25, r25
+ 346:	61 f0       	breq	.+24     	; 0x360 <__fp_splitA+0x20>
+ 348:	9f 3f       	cpi	r25, 0xFF	; 255
+ 34a:	79 f0       	breq	.+30     	; 0x36a <__fp_splitA+0x2a>
+ 34c:	87 95       	ror	r24
+ 34e:	08 95       	ret
+ 350:	12 16       	cp	r1, r18
+ 352:	13 06       	cpc	r1, r19
+ 354:	14 06       	cpc	r1, r20
+ 356:	55 1f       	adc	r21, r21
+ 358:	f2 cf       	rjmp	.-28     	; 0x33e <__fp_split3+0xe>
+ 35a:	46 95       	lsr	r20
+ 35c:	f1 df       	rcall	.-30     	; 0x340 <__fp_splitA>
+ 35e:	08 c0       	rjmp	.+16     	; 0x370 <__fp_splitA+0x30>
+ 360:	16 16       	cp	r1, r22
+ 362:	17 06       	cpc	r1, r23
+ 364:	18 06       	cpc	r1, r24
+ 366:	99 1f       	adc	r25, r25
+ 368:	f1 cf       	rjmp	.-30     	; 0x34c <__fp_splitA+0xc>
+ 36a:	86 95       	lsr	r24
+ 36c:	71 05       	cpc	r23, r1
+ 36e:	61 05       	cpc	r22, r1
+ 370:	08 94       	sec
+ 372:	08 95       	ret
+
+00000374 <__fp_zero>:
+ 374:	e8 94       	clt
+
+00000376 <__fp_szero>:
+ 376:	bb 27       	eor	r27, r27
+ 378:	66 27       	eor	r22, r22
+ 37a:	77 27       	eor	r23, r23
+ 37c:	cb 01       	movw	r24, r22
+ 37e:	97 f9       	bld	r25, 7
+ 380:	08 95       	ret
+
+00000382 <__mulsf3>:
+ 382:	0b d0       	rcall	.+22     	; 0x39a <__mulsf3x>
+ 384:	78 c0       	rjmp	.+240    	; 0x476 <__fp_round>
+ 386:	69 d0       	rcall	.+210    	; 0x45a <__fp_pscA>
+ 388:	28 f0       	brcs	.+10     	; 0x394 <__mulsf3+0x12>
+ 38a:	6e d0       	rcall	.+220    	; 0x468 <__fp_pscB>
+ 38c:	18 f0       	brcs	.+6      	; 0x394 <__mulsf3+0x12>
+ 38e:	95 23       	and	r25, r21
+ 390:	09 f0       	breq	.+2      	; 0x394 <__mulsf3+0x12>
+ 392:	5a c0       	rjmp	.+180    	; 0x448 <__fp_inf>
+ 394:	5f c0       	rjmp	.+190    	; 0x454 <__fp_nan>
+ 396:	11 24       	eor	r1, r1
+ 398:	ee cf       	rjmp	.-36     	; 0x376 <__fp_szero>
+
+0000039a <__mulsf3x>:
+ 39a:	ca df       	rcall	.-108    	; 0x330 <__fp_split3>
+ 39c:	a0 f3       	brcs	.-24     	; 0x386 <__mulsf3+0x4>
+
+0000039e <__mulsf3_pse>:
+ 39e:	95 9f       	mul	r25, r21
+ 3a0:	d1 f3       	breq	.-12     	; 0x396 <__mulsf3+0x14>
+ 3a2:	95 0f       	add	r25, r21
+ 3a4:	50 e0       	ldi	r21, 0x00	; 0
+ 3a6:	55 1f       	adc	r21, r21
+ 3a8:	62 9f       	mul	r22, r18
+ 3aa:	f0 01       	movw	r30, r0
+ 3ac:	72 9f       	mul	r23, r18
+ 3ae:	bb 27       	eor	r27, r27
+ 3b0:	f0 0d       	add	r31, r0
+ 3b2:	b1 1d       	adc	r27, r1
+ 3b4:	63 9f       	mul	r22, r19
+ 3b6:	aa 27       	eor	r26, r26
+ 3b8:	f0 0d       	add	r31, r0
+ 3ba:	b1 1d       	adc	r27, r1
+ 3bc:	aa 1f       	adc	r26, r26
+ 3be:	64 9f       	mul	r22, r20
+ 3c0:	66 27       	eor	r22, r22
+ 3c2:	b0 0d       	add	r27, r0
+ 3c4:	a1 1d       	adc	r26, r1
+ 3c6:	66 1f       	adc	r22, r22
+ 3c8:	82 9f       	mul	r24, r18
+ 3ca:	22 27       	eor	r18, r18
+ 3cc:	b0 0d       	add	r27, r0
+ 3ce:	a1 1d       	adc	r26, r1
+ 3d0:	62 1f       	adc	r22, r18
+ 3d2:	73 9f       	mul	r23, r19
+ 3d4:	b0 0d       	add	r27, r0
+ 3d6:	a1 1d       	adc	r26, r1
+ 3d8:	62 1f       	adc	r22, r18
+ 3da:	83 9f       	mul	r24, r19
+ 3dc:	a0 0d       	add	r26, r0
+ 3de:	61 1d       	adc	r22, r1
+ 3e0:	22 1f       	adc	r18, r18
+ 3e2:	74 9f       	mul	r23, r20
+ 3e4:	33 27       	eor	r19, r19
+ 3e6:	a0 0d       	add	r26, r0
+ 3e8:	61 1d       	adc	r22, r1
+ 3ea:	23 1f       	adc	r18, r19
+ 3ec:	84 9f       	mul	r24, r20
+ 3ee:	60 0d       	add	r22, r0
+ 3f0:	21 1d       	adc	r18, r1
+ 3f2:	82 2f       	mov	r24, r18
+ 3f4:	76 2f       	mov	r23, r22
+ 3f6:	6a 2f       	mov	r22, r26
+ 3f8:	11 24       	eor	r1, r1
+ 3fa:	9f 57       	subi	r25, 0x7F	; 127
+ 3fc:	50 40       	sbci	r21, 0x00	; 0
+ 3fe:	8a f0       	brmi	.+34     	; 0x422 <__mulsf3_pse+0x84>
+ 400:	e1 f0       	breq	.+56     	; 0x43a <__mulsf3_pse+0x9c>
+ 402:	88 23       	and	r24, r24
+ 404:	4a f0       	brmi	.+18     	; 0x418 <__mulsf3_pse+0x7a>
+ 406:	ee 0f       	add	r30, r30
+ 408:	ff 1f       	adc	r31, r31
+ 40a:	bb 1f       	adc	r27, r27
+ 40c:	66 1f       	adc	r22, r22
+ 40e:	77 1f       	adc	r23, r23
+ 410:	88 1f       	adc	r24, r24
+ 412:	91 50       	subi	r25, 0x01	; 1
+ 414:	50 40       	sbci	r21, 0x00	; 0
+ 416:	a9 f7       	brne	.-22     	; 0x402 <__mulsf3_pse+0x64>
+ 418:	9e 3f       	cpi	r25, 0xFE	; 254
+ 41a:	51 05       	cpc	r21, r1
+ 41c:	70 f0       	brcs	.+28     	; 0x43a <__mulsf3_pse+0x9c>
+ 41e:	14 c0       	rjmp	.+40     	; 0x448 <__fp_inf>
+ 420:	aa cf       	rjmp	.-172    	; 0x376 <__fp_szero>
+ 422:	5f 3f       	cpi	r21, 0xFF	; 255
+ 424:	ec f3       	brlt	.-6      	; 0x420 <__mulsf3_pse+0x82>
+ 426:	98 3e       	cpi	r25, 0xE8	; 232
+ 428:	dc f3       	brlt	.-10     	; 0x420 <__mulsf3_pse+0x82>
+ 42a:	86 95       	lsr	r24
+ 42c:	77 95       	ror	r23
+ 42e:	67 95       	ror	r22
+ 430:	b7 95       	ror	r27
+ 432:	f7 95       	ror	r31
+ 434:	e7 95       	ror	r30
+ 436:	9f 5f       	subi	r25, 0xFF	; 255
+ 438:	c1 f7       	brne	.-16     	; 0x42a <__mulsf3_pse+0x8c>
+ 43a:	fe 2b       	or	r31, r30
+ 43c:	88 0f       	add	r24, r24
+ 43e:	91 1d       	adc	r25, r1
+ 440:	96 95       	lsr	r25
+ 442:	87 95       	ror	r24
+ 444:	97 f9       	bld	r25, 7
+ 446:	08 95       	ret
+
+00000448 <__fp_inf>:
+ 448:	97 f9       	bld	r25, 7
+ 44a:	9f 67       	ori	r25, 0x7F	; 127
+ 44c:	80 e8       	ldi	r24, 0x80	; 128
+ 44e:	70 e0       	ldi	r23, 0x00	; 0
+ 450:	60 e0       	ldi	r22, 0x00	; 0
+ 452:	08 95       	ret
+
+00000454 <__fp_nan>:
+ 454:	9f ef       	ldi	r25, 0xFF	; 255
+ 456:	80 ec       	ldi	r24, 0xC0	; 192
+ 458:	08 95       	ret
+
+0000045a <__fp_pscA>:
+ 45a:	00 24       	eor	r0, r0
+ 45c:	0a 94       	dec	r0
+ 45e:	16 16       	cp	r1, r22
+ 460:	17 06       	cpc	r1, r23
+ 462:	18 06       	cpc	r1, r24
+ 464:	09 06       	cpc	r0, r25
+ 466:	08 95       	ret
+
+00000468 <__fp_pscB>:
+ 468:	00 24       	eor	r0, r0
+ 46a:	0a 94       	dec	r0
+ 46c:	12 16       	cp	r1, r18
+ 46e:	13 06       	cpc	r1, r19
+ 470:	14 06       	cpc	r1, r20
+ 472:	05 06       	cpc	r0, r21
+ 474:	08 95       	ret
+
+00000476 <__fp_round>:
+ 476:	09 2e       	mov	r0, r25
+ 478:	03 94       	inc	r0
+ 47a:	00 0c       	add	r0, r0
+ 47c:	11 f4       	brne	.+4      	; 0x482 <__fp_round+0xc>
+ 47e:	88 23       	and	r24, r24
+ 480:	52 f0       	brmi	.+20     	; 0x496 <__fp_round+0x20>
+ 482:	bb 0f       	add	r27, r27
+ 484:	40 f4       	brcc	.+16     	; 0x496 <__fp_round+0x20>
+ 486:	bf 2b       	or	r27, r31
+ 488:	11 f4       	brne	.+4      	; 0x48e <__fp_round+0x18>
+ 48a:	60 ff       	sbrs	r22, 0
+ 48c:	04 c0       	rjmp	.+8      	; 0x496 <__fp_round+0x20>
+ 48e:	6f 5f       	subi	r22, 0xFF	; 255
+ 490:	7f 4f       	sbci	r23, 0xFF	; 255
+ 492:	8f 4f       	sbci	r24, 0xFF	; 255
+ 494:	9f 4f       	sbci	r25, 0xFF	; 255
+ 496:	08 95       	ret
+
+00000498 <__divmodhi4>:
+ 498:	97 fb       	bst	r25, 7
+ 49a:	07 2e       	mov	r0, r23
+ 49c:	16 f4       	brtc	.+4      	; 0x4a2 <__divmodhi4+0xa>
+ 49e:	00 94       	com	r0
+ 4a0:	06 d0       	rcall	.+12     	; 0x4ae <__divmodhi4_neg1>
+ 4a2:	77 fd       	sbrc	r23, 7
+ 4a4:	08 d0       	rcall	.+16     	; 0x4b6 <__divmodhi4_neg2>
+ 4a6:	0b d0       	rcall	.+22     	; 0x4be <__udivmodhi4>
+ 4a8:	07 fc       	sbrc	r0, 7
+ 4aa:	05 d0       	rcall	.+10     	; 0x4b6 <__divmodhi4_neg2>
+ 4ac:	3e f4       	brtc	.+14     	; 0x4bc <__divmodhi4_exit>
+
+000004ae <__divmodhi4_neg1>:
+ 4ae:	90 95       	com	r25
+ 4b0:	81 95       	neg	r24
+ 4b2:	9f 4f       	sbci	r25, 0xFF	; 255
+ 4b4:	08 95       	ret
+
+000004b6 <__divmodhi4_neg2>:
+ 4b6:	70 95       	com	r23
+ 4b8:	61 95       	neg	r22
+ 4ba:	7f 4f       	sbci	r23, 0xFF	; 255
+
+000004bc <__divmodhi4_exit>:
+ 4bc:	08 95       	ret
+
+000004be <__udivmodhi4>:
+ 4be:	aa 1b       	sub	r26, r26
+ 4c0:	bb 1b       	sub	r27, r27
+ 4c2:	51 e1       	ldi	r21, 0x11	; 17
+ 4c4:	07 c0       	rjmp	.+14     	; 0x4d4 <__udivmodhi4_ep>
+
+000004c6 <__udivmodhi4_loop>:
+ 4c6:	aa 1f       	adc	r26, r26
+ 4c8:	bb 1f       	adc	r27, r27
+ 4ca:	a6 17       	cp	r26, r22
+ 4cc:	b7 07       	cpc	r27, r23
+ 4ce:	10 f0       	brcs	.+4      	; 0x4d4 <__udivmodhi4_ep>
+ 4d0:	a6 1b       	sub	r26, r22
+ 4d2:	b7 0b       	sbc	r27, r23
+
+000004d4 <__udivmodhi4_ep>:
+ 4d4:	88 1f       	adc	r24, r24
+ 4d6:	99 1f       	adc	r25, r25
+ 4d8:	5a 95       	dec	r21
+ 4da:	a9 f7       	brne	.-22     	; 0x4c6 <__udivmodhi4_loop>
+ 4dc:	80 95       	com	r24
+ 4de:	90 95       	com	r25
+ 4e0:	bc 01       	movw	r22, r24
+ 4e2:	cd 01       	movw	r24, r26
+ 4e4:	08 95       	ret
+
+000004e6 <_exit>:
+ 4e6:	f8 94       	cli
+
+000004e8 <__stop_program>:
+ 4e8:	ff cf       	rjmp	.-2      	; 0x4e8 <__stop_program>

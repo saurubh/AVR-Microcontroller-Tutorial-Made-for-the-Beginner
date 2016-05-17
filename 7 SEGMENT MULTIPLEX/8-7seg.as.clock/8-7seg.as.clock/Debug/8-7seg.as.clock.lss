@@ -1,0 +1,516 @@
+
+8-7seg.as.clock.elf:     file format elf32-avr
+
+Sections:
+Idx Name          Size      VMA       LMA       File off  Algn
+  0 .text         00000248  00000000  00000000  00000074  2**1
+                  CONTENTS, ALLOC, LOAD, READONLY, CODE
+  1 .data         0000001a  00800060  00000248  000002bc  2**0
+                  CONTENTS, ALLOC, LOAD, DATA
+  2 .comment      00000030  00000000  00000000  000002d6  2**0
+                  CONTENTS, READONLY
+  3 .debug_aranges 00000020  00000000  00000000  00000306  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  4 .debug_info   0000031b  00000000  00000000  00000326  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  5 .debug_abbrev 0000010b  00000000  00000000  00000641  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  6 .debug_line   00000266  00000000  00000000  0000074c  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  7 .debug_frame  00000034  00000000  00000000  000009b4  2**2
+                  CONTENTS, READONLY, DEBUGGING
+  8 .debug_str    0000018d  00000000  00000000  000009e8  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  9 .debug_loc    00000a7f  00000000  00000000  00000b75  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 10 .debug_ranges 00000010  00000000  00000000  000015f4  2**0
+                  CONTENTS, READONLY, DEBUGGING
+
+Disassembly of section .text:
+
+00000000 <__vectors>:
+   0:	12 c0       	rjmp	.+36     	; 0x26 <__ctors_end>
+   2:	24 c0       	rjmp	.+72     	; 0x4c <__bad_interrupt>
+   4:	23 c0       	rjmp	.+70     	; 0x4c <__bad_interrupt>
+   6:	22 c0       	rjmp	.+68     	; 0x4c <__bad_interrupt>
+   8:	21 c0       	rjmp	.+66     	; 0x4c <__bad_interrupt>
+   a:	20 c0       	rjmp	.+64     	; 0x4c <__bad_interrupt>
+   c:	1f c0       	rjmp	.+62     	; 0x4c <__bad_interrupt>
+   e:	1e c0       	rjmp	.+60     	; 0x4c <__bad_interrupt>
+  10:	1d c0       	rjmp	.+58     	; 0x4c <__bad_interrupt>
+  12:	1c c0       	rjmp	.+56     	; 0x4c <__bad_interrupt>
+  14:	1b c0       	rjmp	.+54     	; 0x4c <__bad_interrupt>
+  16:	1a c0       	rjmp	.+52     	; 0x4c <__bad_interrupt>
+  18:	19 c0       	rjmp	.+50     	; 0x4c <__bad_interrupt>
+  1a:	18 c0       	rjmp	.+48     	; 0x4c <__bad_interrupt>
+  1c:	17 c0       	rjmp	.+46     	; 0x4c <__bad_interrupt>
+  1e:	16 c0       	rjmp	.+44     	; 0x4c <__bad_interrupt>
+  20:	15 c0       	rjmp	.+42     	; 0x4c <__bad_interrupt>
+  22:	14 c0       	rjmp	.+40     	; 0x4c <__bad_interrupt>
+  24:	13 c0       	rjmp	.+38     	; 0x4c <__bad_interrupt>
+
+00000026 <__ctors_end>:
+  26:	11 24       	eor	r1, r1
+  28:	1f be       	out	0x3f, r1	; 63
+  2a:	cf e5       	ldi	r28, 0x5F	; 95
+  2c:	d4 e0       	ldi	r29, 0x04	; 4
+  2e:	de bf       	out	0x3e, r29	; 62
+  30:	cd bf       	out	0x3d, r28	; 61
+
+00000032 <__do_copy_data>:
+  32:	10 e0       	ldi	r17, 0x00	; 0
+  34:	a0 e6       	ldi	r26, 0x60	; 96
+  36:	b0 e0       	ldi	r27, 0x00	; 0
+  38:	e8 e4       	ldi	r30, 0x48	; 72
+  3a:	f2 e0       	ldi	r31, 0x02	; 2
+  3c:	02 c0       	rjmp	.+4      	; 0x42 <__SREG__+0x3>
+  3e:	05 90       	lpm	r0, Z+
+  40:	0d 92       	st	X+, r0
+  42:	aa 37       	cpi	r26, 0x7A	; 122
+  44:	b1 07       	cpc	r27, r17
+  46:	d9 f7       	brne	.-10     	; 0x3e <__SP_H__>
+  48:	02 d0       	rcall	.+4      	; 0x4e <main>
+  4a:	fc c0       	rjmp	.+504    	; 0x244 <_exit>
+
+0000004c <__bad_interrupt>:
+  4c:	d9 cf       	rjmp	.-78     	; 0x0 <__vectors>
+
+0000004e <main>:
+		
+
+#include <avr/io.h>
+#include <util/delay.h>
+int main(void)
+{
+  4e:	cf 93       	push	r28
+  50:	df 93       	push	r29
+  52:	cd b7       	in	r28, 0x3d	; 61
+  54:	de b7       	in	r29, 0x3e	; 62
+  56:	ae 97       	sbiw	r28, 0x2e	; 46
+  58:	0f b6       	in	r0, 0x3f	; 63
+  5a:	f8 94       	cli
+  5c:	de bf       	out	0x3e, r29	; 62
+  5e:	0f be       	out	0x3f, r0	; 63
+  60:	cd bf       	out	0x3d, r28	; 61
+	DDRB=0xff;				// 7 seg selection pin
+  62:	8f ef       	ldi	r24, 0xFF	; 255
+  64:	87 bb       	out	0x17, r24	; 23
+	DDRD=0xff;				// 7 seg data pins
+  66:	81 bb       	out	0x11, r24	; 17
+	int i,j,k,l,m,n,stable;
+	int a[13]={0x3f,0x06,0x5b,0x4f,0x66,0x6d,0x7d,0x07,0x7f,0x6f,0x3f,0x06,0x5b};		// values in array a[10]={0,1,2,3,4,5,6,7,8,9}
+  68:	8a e1       	ldi	r24, 0x1A	; 26
+  6a:	e0 e6       	ldi	r30, 0x60	; 96
+  6c:	f0 e0       	ldi	r31, 0x00	; 0
+  6e:	de 01       	movw	r26, r28
+  70:	11 96       	adiw	r26, 0x01	; 1
+  72:	01 90       	ld	r0, Z+
+  74:	0d 92       	st	X+, r0
+  76:	8a 95       	dec	r24
+  78:	e1 f7       	brne	.-8      	; 0x72 <main+0x24>
+    while(1)
+    {
+        for(i=0;i<2;i++)											// for loop for 1st 7 seg
+  7a:	1e a2       	std	Y+38, r1	; 0x26
+  7c:	1d a2       	std	Y+37, r1	; 0x25
+  7e:	ce 01       	movw	r24, r28
+  80:	01 96       	adiw	r24, 0x01	; 1
+  82:	9e 8f       	std	Y+30, r25	; 0x1e
+  84:	8d 8f       	std	Y+29, r24	; 0x1d
+  86:	fc 01       	movw	r30, r24
+  88:	98 a3       	std	Y+32, r25	; 0x20
+  8a:	8f 8f       	std	Y+31, r24	; 0x1f
+  8c:	cf 01       	movw	r24, r30
+  8e:	0c 96       	adiw	r24, 0x0c	; 12
+  90:	9c a3       	std	Y+36, r25	; 0x24
+  92:	8b a3       	std	Y+35, r24	; 0x23
+									_delay_ms(5);
+									PORTB=0xfd;						// select 7-seg no. 2
+									PORTD=a[j];
+									_delay_ms(5);
+									PORTB=0xfe;						// select 7-seg no. 1
+									PORTD=a[i];
+  94:	9f 8d       	ldd	r25, Y+31	; 0x1f
+  96:	9f a3       	std	Y+39, r25	; 0x27
+  98:	e8 a1       	ldd	r30, Y+32	; 0x20
+  9a:	e8 a7       	std	Y+40, r30	; 0x28
+  9c:	99 a7       	std	Y+41, r25	; 0x29
+  9e:	ea a7       	std	Y+42, r30	; 0x2a
+  a0:	79 2e       	mov	r7, r25
+  a2:	4e 2e       	mov	r4, r30
+  a4:	ee 24       	eor	r14, r14
+  a6:	e3 94       	inc	r14
+  a8:	f1 2c       	mov	r15, r1
+  aa:	ec 0e       	add	r14, r28
+  ac:	fd 1e       	adc	r15, r29
+  ae:	f4 e1       	ldi	r31, 0x14	; 20
+  b0:	ef 0e       	add	r14, r31
+  b2:	f1 1c       	adc	r15, r1
+						{
+							for(n=0;n<10;n++)						// for loop for 8th 7 seg
+							{
+								for(stable=0;stable<5;stable++)		// run loop for <40 with frequency 4MHz to run as actual clock with sync secs
+								{
+									PORTB=0x7f;						// select 7-seg no. 8
+  b4:	0f 2e       	mov	r0, r31
+  b6:	ff e7       	ldi	r31, 0x7F	; 127
+  b8:	5f 2e       	mov	r5, r31
+  ba:	f0 2d       	mov	r31, r0
+									PORTD=a[n];
+									_delay_ms(5);
+									PORTB=0xbf;						// select 7-seg no. 7
+  bc:	0f 2e       	mov	r0, r31
+  be:	ff eb       	ldi	r31, 0xBF	; 191
+  c0:	6f 2e       	mov	r6, r31
+  c2:	f0 2d       	mov	r31, r0
+		
+
+#include <avr/io.h>
+#include <util/delay.h>
+int main(void)
+{
+  c4:	0f 2e       	mov	r0, r31
+  c6:	f5 e0       	ldi	r31, 0x05	; 5
+  c8:	3f 2e       	mov	r3, r31
+  ca:	f0 2d       	mov	r31, r0
+  cc:	21 2c       	mov	r2, r1
+  ce:	fc a6       	std	Y+44, r15	; 0x2c
+  d0:	eb a6       	std	Y+43, r14	; 0x2b
+  d2:	aa c0       	rjmp	.+340    	; 0x228 <main+0x1da>
+						{
+							for(n=0;n<10;n++)						// for loop for 8th 7 seg
+							{
+								for(stable=0;stable<5;stable++)		// run loop for <40 with frequency 4MHz to run as actual clock with sync secs
+								{
+									PORTB=0x7f;						// select 7-seg no. 8
+  d4:	58 ba       	out	0x18, r5	; 24
+									PORTD=a[n];
+  d6:	ed a5       	ldd	r30, Y+45	; 0x2d
+  d8:	fe a5       	ldd	r31, Y+46	; 0x2e
+  da:	c0 80       	ld	r12, Z
+  dc:	c2 ba       	out	0x12, r12	; 18
+	#else
+		//round up by default
+		__ticks_dc = (uint32_t)(ceil(fabs(__tmp)));
+	#endif
+
+	__builtin_avr_delay_cycles(__ticks_dc);
+  de:	e1 ee       	ldi	r30, 0xE1	; 225
+  e0:	f4 e0       	ldi	r31, 0x04	; 4
+  e2:	31 97       	sbiw	r30, 0x01	; 1
+  e4:	f1 f7       	brne	.-4      	; 0xe2 <main+0x94>
+  e6:	00 c0       	rjmp	.+0      	; 0xe8 <main+0x9a>
+  e8:	00 00       	nop
+									_delay_ms(5);
+									PORTB=0xbf;						// select 7-seg no. 7
+  ea:	68 ba       	out	0x18, r6	; 24
+									PORTD=a[m];
+  ec:	cc 90       	ld	r12, X
+  ee:	c2 ba       	out	0x12, r12	; 18
+  f0:	e1 ee       	ldi	r30, 0xE1	; 225
+  f2:	f4 e0       	ldi	r31, 0x04	; 4
+  f4:	31 97       	sbiw	r30, 0x01	; 1
+  f6:	f1 f7       	brne	.-4      	; 0xf4 <main+0xa6>
+  f8:	00 c0       	rjmp	.+0      	; 0xfa <main+0xac>
+  fa:	00 00       	nop
+									_delay_ms(5);
+									PORTB=0xdf;						// select 7-seg no. 6
+  fc:	48 ba       	out	0x18, r4	; 24
+									PORTD=0x40;
+  fe:	d2 ba       	out	0x12, r13	; 18
+ 100:	e1 ee       	ldi	r30, 0xE1	; 225
+ 102:	f4 e0       	ldi	r31, 0x04	; 4
+ 104:	31 97       	sbiw	r30, 0x01	; 1
+ 106:	f1 f7       	brne	.-4      	; 0x104 <main+0xb6>
+ 108:	00 c0       	rjmp	.+0      	; 0x10a <main+0xbc>
+ 10a:	00 00       	nop
+									_delay_ms(5);
+									PORTB=0xef;						// select 7-seg no. 5
+ 10c:	78 ba       	out	0x18, r7	; 24
+									PORTD=a[l];
+ 10e:	f9 01       	movw	r30, r18
+ 110:	c0 80       	ld	r12, Z
+ 112:	c2 ba       	out	0x12, r12	; 18
+ 114:	e1 ee       	ldi	r30, 0xE1	; 225
+ 116:	f4 e0       	ldi	r31, 0x04	; 4
+ 118:	31 97       	sbiw	r30, 0x01	; 1
+ 11a:	f1 f7       	brne	.-4      	; 0x118 <main+0xca>
+ 11c:	00 c0       	rjmp	.+0      	; 0x11e <main+0xd0>
+ 11e:	00 00       	nop
+									_delay_ms(5);
+									PORTB=0xf7;						// select 7-seg no. 4
+ 120:	88 ba       	out	0x18, r8	; 24
+									PORTD=a[k];
+ 122:	fa 01       	movw	r30, r20
+ 124:	c0 80       	ld	r12, Z
+ 126:	c2 ba       	out	0x12, r12	; 18
+ 128:	e1 ee       	ldi	r30, 0xE1	; 225
+ 12a:	f4 e0       	ldi	r31, 0x04	; 4
+ 12c:	31 97       	sbiw	r30, 0x01	; 1
+ 12e:	f1 f7       	brne	.-4      	; 0x12c <main+0xde>
+ 130:	00 c0       	rjmp	.+0      	; 0x132 <main+0xe4>
+ 132:	00 00       	nop
+									_delay_ms(5);
+									PORTB=0xfb;						// select 7-seg no. 3
+ 134:	98 ba       	out	0x18, r9	; 24
+									PORTD=0x40;
+ 136:	d2 ba       	out	0x12, r13	; 18
+ 138:	e1 ee       	ldi	r30, 0xE1	; 225
+ 13a:	f4 e0       	ldi	r31, 0x04	; 4
+ 13c:	31 97       	sbiw	r30, 0x01	; 1
+ 13e:	f1 f7       	brne	.-4      	; 0x13c <main+0xee>
+ 140:	00 c0       	rjmp	.+0      	; 0x142 <main+0xf4>
+ 142:	00 00       	nop
+									_delay_ms(5);
+									PORTB=0xfd;						// select 7-seg no. 2
+ 144:	a8 ba       	out	0x18, r10	; 24
+									PORTD=a[j];
+ 146:	fb 01       	movw	r30, r22
+ 148:	c0 80       	ld	r12, Z
+ 14a:	c2 ba       	out	0x12, r12	; 18
+ 14c:	e1 ee       	ldi	r30, 0xE1	; 225
+ 14e:	f4 e0       	ldi	r31, 0x04	; 4
+ 150:	31 97       	sbiw	r30, 0x01	; 1
+ 152:	f1 f7       	brne	.-4      	; 0x150 <main+0x102>
+ 154:	00 c0       	rjmp	.+0      	; 0x156 <main+0x108>
+ 156:	00 00       	nop
+									_delay_ms(5);
+									PORTB=0xfe;						// select 7-seg no. 1
+ 158:	b8 ba       	out	0x18, r11	; 24
+									PORTD=a[i];
+ 15a:	f8 01       	movw	r30, r16
+ 15c:	c0 80       	ld	r12, Z
+ 15e:	c2 ba       	out	0x12, r12	; 18
+ 160:	e1 ee       	ldi	r30, 0xE1	; 225
+ 162:	f4 e0       	ldi	r31, 0x04	; 4
+ 164:	31 97       	sbiw	r30, 0x01	; 1
+ 166:	f1 f7       	brne	.-4      	; 0x164 <main+0x116>
+ 168:	00 c0       	rjmp	.+0      	; 0x16a <main+0x11c>
+ 16a:	00 00       	nop
+ 16c:	01 97       	sbiw	r24, 0x01	; 1
+					{
+						for(m=0;m<6;m++)							// for loop for 7th 7 seg
+						{
+							for(n=0;n<10;n++)						// for loop for 8th 7 seg
+							{
+								for(stable=0;stable<5;stable++)		// run loop for <40 with frequency 4MHz to run as actual clock with sync secs
+ 16e:	00 97       	sbiw	r24, 0x00	; 0
+ 170:	09 f0       	breq	.+2      	; 0x174 <main+0x126>
+ 172:	b0 cf       	rjmp	.-160    	; 0xd4 <main+0x86>
+ 174:	ed a5       	ldd	r30, Y+45	; 0x2d
+ 176:	fe a5       	ldd	r31, Y+46	; 0x2e
+ 178:	32 96       	adiw	r30, 0x02	; 2
+				{
+					for(l=0;l<10;l++)								// for loop for 5th 7 seg	
+					{
+						for(m=0;m<6;m++)							// for loop for 7th 7 seg
+						{
+							for(n=0;n<10;n++)						// for loop for 8th 7 seg
+ 17a:	ee 15       	cp	r30, r14
+ 17c:	ff 05       	cpc	r31, r15
+ 17e:	29 f0       	breq	.+10     	; 0x18a <main+0x13c>
+		
+
+#include <avr/io.h>
+#include <util/delay.h>
+int main(void)
+{
+ 180:	83 2d       	mov	r24, r3
+ 182:	92 2d       	mov	r25, r2
+ 184:	fe a7       	std	Y+46, r31	; 0x2e
+ 186:	ed a7       	std	Y+45, r30	; 0x2d
+ 188:	a5 cf       	rjmp	.-182    	; 0xd4 <main+0x86>
+ 18a:	12 96       	adiw	r26, 0x02	; 2
+			{
+				for(k=0;k<6;k++)									// for loop for 4th 7 seg
+				{
+					for(l=0;l<10;l++)								// for loop for 5th 7 seg	
+					{
+						for(m=0;m<6;m++)							// for loop for 7th 7 seg
+ 18c:	8b a1       	ldd	r24, Y+35	; 0x23
+ 18e:	9c a1       	ldd	r25, Y+36	; 0x24
+ 190:	a8 17       	cp	r26, r24
+ 192:	b9 07       	cpc	r27, r25
+ 194:	79 f0       	breq	.+30     	; 0x1b4 <main+0x166>
+		
+
+#include <avr/io.h>
+#include <util/delay.h>
+int main(void)
+{
+ 196:	e9 a1       	ldd	r30, Y+33	; 0x21
+ 198:	fa a1       	ldd	r31, Y+34	; 0x22
+									PORTD=a[l];
+									_delay_ms(5);
+									PORTB=0xf7;						// select 7-seg no. 4
+									PORTD=a[k];
+									_delay_ms(5);
+									PORTB=0xfb;						// select 7-seg no. 3
+ 19a:	0f 2e       	mov	r0, r31
+ 19c:	fb ef       	ldi	r31, 0xFB	; 251
+ 19e:	9f 2e       	mov	r9, r31
+ 1a0:	f0 2d       	mov	r31, r0
+									PORTD=0x40;
+									_delay_ms(5);
+									PORTB=0xfd;						// select 7-seg no. 2
+ 1a2:	0f 2e       	mov	r0, r31
+ 1a4:	fd ef       	ldi	r31, 0xFD	; 253
+ 1a6:	af 2e       	mov	r10, r31
+ 1a8:	f0 2d       	mov	r31, r0
+									PORTD=a[j];
+									_delay_ms(5);
+									PORTB=0xfe;						// select 7-seg no. 1
+ 1aa:	0f 2e       	mov	r0, r31
+ 1ac:	fe ef       	ldi	r31, 0xFE	; 254
+ 1ae:	bf 2e       	mov	r11, r31
+ 1b0:	f0 2d       	mov	r31, r0
+ 1b2:	e6 cf       	rjmp	.-52     	; 0x180 <main+0x132>
+ 1b4:	2e 5f       	subi	r18, 0xFE	; 254
+ 1b6:	3f 4f       	sbci	r19, 0xFF	; 255
+		{
+			for(j=0;j<13;j++)										// for loop for 2nd 7 seg
+			{
+				for(k=0;k<6;k++)									// for loop for 4th 7 seg
+				{
+					for(l=0;l<10;l++)								// for loop for 5th 7 seg	
+ 1b8:	2e 15       	cp	r18, r14
+ 1ba:	3f 05       	cpc	r19, r15
+ 1bc:	71 f0       	breq	.+28     	; 0x1da <main+0x18c>
+		
+
+#include <avr/io.h>
+#include <util/delay.h>
+int main(void)
+{
+ 1be:	a9 a1       	ldd	r26, Y+33	; 0x21
+ 1c0:	ba a1       	ldd	r27, Y+34	; 0x22
+									_delay_ms(5);
+									PORTB=0xbf;						// select 7-seg no. 7
+									PORTD=a[m];
+									_delay_ms(5);
+									PORTB=0xdf;						// select 7-seg no. 6
+									PORTD=0x40;
+ 1c2:	68 94       	set
+ 1c4:	dd 24       	eor	r13, r13
+ 1c6:	d6 f8       	bld	r13, 6
+									_delay_ms(5);
+									PORTB=0xef;						// select 7-seg no. 5
+ 1c8:	0f 2e       	mov	r0, r31
+ 1ca:	ff ee       	ldi	r31, 0xEF	; 239
+ 1cc:	7f 2e       	mov	r7, r31
+ 1ce:	f0 2d       	mov	r31, r0
+									PORTD=a[l];
+									_delay_ms(5);
+									PORTB=0xf7;						// select 7-seg no. 4
+ 1d0:	0f 2e       	mov	r0, r31
+ 1d2:	f7 ef       	ldi	r31, 0xF7	; 247
+ 1d4:	8f 2e       	mov	r8, r31
+ 1d6:	f0 2d       	mov	r31, r0
+ 1d8:	de cf       	rjmp	.-68     	; 0x196 <main+0x148>
+ 1da:	4e 5f       	subi	r20, 0xFE	; 254
+ 1dc:	5f 4f       	sbci	r21, 0xFF	; 255
+    {
+        for(i=0;i<2;i++)											// for loop for 1st 7 seg
+		{
+			for(j=0;j<13;j++)										// for loop for 2nd 7 seg
+			{
+				for(k=0;k<6;k++)									// for loop for 4th 7 seg
+ 1de:	eb a1       	ldd	r30, Y+35	; 0x23
+ 1e0:	fc a1       	ldd	r31, Y+36	; 0x24
+ 1e2:	4e 17       	cp	r20, r30
+ 1e4:	5f 07       	cpc	r21, r31
+ 1e6:	39 f0       	breq	.+14     	; 0x1f6 <main+0x1a8>
+		
+
+#include <avr/io.h>
+#include <util/delay.h>
+int main(void)
+{
+ 1e8:	29 a5       	ldd	r18, Y+41	; 0x29
+ 1ea:	3a a5       	ldd	r19, Y+42	; 0x2a
+									PORTD=a[n];
+									_delay_ms(5);
+									PORTB=0xbf;						// select 7-seg no. 7
+									PORTD=a[m];
+									_delay_ms(5);
+									PORTB=0xdf;						// select 7-seg no. 6
+ 1ec:	0f 2e       	mov	r0, r31
+ 1ee:	ff ed       	ldi	r31, 0xDF	; 223
+ 1f0:	4f 2e       	mov	r4, r31
+ 1f2:	f0 2d       	mov	r31, r0
+ 1f4:	e4 cf       	rjmp	.-56     	; 0x1be <main+0x170>
+ 1f6:	79 a0       	ldd	r7, Y+33	; 0x21
+ 1f8:	4a a0       	ldd	r4, Y+34	; 0x22
+ 1fa:	6e 5f       	subi	r22, 0xFE	; 254
+ 1fc:	7f 4f       	sbci	r23, 0xFF	; 255
+	int a[13]={0x3f,0x06,0x5b,0x4f,0x66,0x6d,0x7d,0x07,0x7f,0x6f,0x3f,0x06,0x5b};		// values in array a[10]={0,1,2,3,4,5,6,7,8,9}
+    while(1)
+    {
+        for(i=0;i<2;i++)											// for loop for 1st 7 seg
+		{
+			for(j=0;j<13;j++)										// for loop for 2nd 7 seg
+ 1fe:	8b 8d       	ldd	r24, Y+27	; 0x1b
+ 200:	9c 8d       	ldd	r25, Y+28	; 0x1c
+ 202:	68 17       	cp	r22, r24
+ 204:	79 07       	cpc	r23, r25
+ 206:	39 f0       	breq	.+14     	; 0x216 <main+0x1c8>
+		
+
+#include <avr/io.h>
+#include <util/delay.h>
+int main(void)
+{
+ 208:	4f a1       	ldd	r20, Y+39	; 0x27
+ 20a:	58 a5       	ldd	r21, Y+40	; 0x28
+ 20c:	eb a4       	ldd	r14, Y+43	; 0x2b
+ 20e:	fc a4       	ldd	r15, Y+44	; 0x2c
+ 210:	79 a2       	std	Y+33, r7	; 0x21
+ 212:	4a a2       	std	Y+34, r4	; 0x22
+ 214:	e9 cf       	rjmp	.-46     	; 0x1e8 <main+0x19a>
+	DDRD=0xff;				// 7 seg data pins
+	int i,j,k,l,m,n,stable;
+	int a[13]={0x3f,0x06,0x5b,0x4f,0x66,0x6d,0x7d,0x07,0x7f,0x6f,0x3f,0x06,0x5b};		// values in array a[10]={0,1,2,3,4,5,6,7,8,9}
+    while(1)
+    {
+        for(i=0;i<2;i++)											// for loop for 1st 7 seg
+ 216:	ed a1       	ldd	r30, Y+37	; 0x25
+ 218:	fe a1       	ldd	r31, Y+38	; 0x26
+ 21a:	31 96       	adiw	r30, 0x01	; 1
+ 21c:	fe a3       	std	Y+38, r31	; 0x26
+ 21e:	ed a3       	std	Y+37, r30	; 0x25
+ 220:	32 97       	sbiw	r30, 0x02	; 2
+ 222:	14 f0       	brlt	.+4      	; 0x228 <main+0x1da>
+ 224:	1e a2       	std	Y+38, r1	; 0x26
+ 226:	1d a2       	std	Y+37, r1	; 0x25
+ 228:	ce 01       	movw	r24, r28
+ 22a:	4b 96       	adiw	r24, 0x1b	; 27
+ 22c:	9c 8f       	std	Y+28, r25	; 0x1c
+ 22e:	8b 8f       	std	Y+27, r24	; 0x1b
+		
+
+#include <avr/io.h>
+#include <util/delay.h>
+int main(void)
+{
+ 230:	be 01       	movw	r22, r28
+ 232:	6f 5f       	subi	r22, 0xFF	; 255
+ 234:	7f 4f       	sbci	r23, 0xFF	; 255
+									_delay_ms(5);
+									PORTB=0xfd;						// select 7-seg no. 2
+									PORTD=a[j];
+									_delay_ms(5);
+									PORTB=0xfe;						// select 7-seg no. 1
+									PORTD=a[i];
+ 236:	0d a1       	ldd	r16, Y+37	; 0x25
+ 238:	1e a1       	ldd	r17, Y+38	; 0x26
+ 23a:	00 0f       	add	r16, r16
+ 23c:	11 1f       	adc	r17, r17
+ 23e:	06 0f       	add	r16, r22
+ 240:	17 1f       	adc	r17, r23
+ 242:	e2 cf       	rjmp	.-60     	; 0x208 <main+0x1ba>
+
+00000244 <_exit>:
+ 244:	f8 94       	cli
+
+00000246 <__stop_program>:
+ 246:	ff cf       	rjmp	.-2      	; 0x246 <__stop_program>

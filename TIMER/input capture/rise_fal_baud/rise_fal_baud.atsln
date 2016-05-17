@@ -1,0 +1,20 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Atmel Studio Solution File, Format Version 11.00
+Project("{54F91283-7BC4-4236-8FF9-10F437C3AD48}") = "rise_fal_baud", "rise_fal_baud\rise_fal_baud.cproj", "{2B6A864C-50CB-4FD2-8D3D-A0D5C63E763A}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|AVR = Debug|AVR
+		Release|AVR = Release|AVR
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{2B6A864C-50CB-4FD2-8D3D-A0D5C63E763A}.Debug|AVR.ActiveCfg = Debug|AVR
+		{2B6A864C-50CB-4FD2-8D3D-A0D5C63E763A}.Debug|AVR.Build.0 = Debug|AVR
+		{2B6A864C-50CB-4FD2-8D3D-A0D5C63E763A}.Release|AVR.ActiveCfg = Release|AVR
+		{2B6A864C-50CB-4FD2-8D3D-A0D5C63E763A}.Release|AVR.Build.0 = Release|AVR
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

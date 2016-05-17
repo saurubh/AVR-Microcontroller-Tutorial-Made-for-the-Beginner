@@ -1,0 +1,20 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Atmel Studio Solution File, Format Version 11.00
+Project("{54F91283-7BC4-4236-8FF9-10F437C3AD48}") = "ADC Temp Sensor", "ADC Temp Sensor\ADC Temp Sensor.cproj", "{B8E37BBB-17ED-4BF8-8ABA-3373F31F473A}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|AVR = Debug|AVR
+		Release|AVR = Release|AVR
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{B8E37BBB-17ED-4BF8-8ABA-3373F31F473A}.Debug|AVR.ActiveCfg = Debug|AVR
+		{B8E37BBB-17ED-4BF8-8ABA-3373F31F473A}.Debug|AVR.Build.0 = Debug|AVR
+		{B8E37BBB-17ED-4BF8-8ABA-3373F31F473A}.Release|AVR.ActiveCfg = Release|AVR
+		{B8E37BBB-17ED-4BF8-8ABA-3373F31F473A}.Release|AVR.Build.0 = Release|AVR
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

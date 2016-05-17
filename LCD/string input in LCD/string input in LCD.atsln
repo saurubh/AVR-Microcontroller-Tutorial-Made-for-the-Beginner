@@ -1,0 +1,20 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Atmel Studio Solution File, Format Version 11.00
+Project("{54F91283-7BC4-4236-8FF9-10F437C3AD48}") = "string input in LCD", "string input in LCD\string input in LCD.cproj", "{B384E2F1-5B11-4F07-BEB2-58D3C765413C}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|AVR = Debug|AVR
+		Release|AVR = Release|AVR
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{B384E2F1-5B11-4F07-BEB2-58D3C765413C}.Debug|AVR.ActiveCfg = Debug|AVR
+		{B384E2F1-5B11-4F07-BEB2-58D3C765413C}.Debug|AVR.Build.0 = Debug|AVR
+		{B384E2F1-5B11-4F07-BEB2-58D3C765413C}.Release|AVR.ActiveCfg = Release|AVR
+		{B384E2F1-5B11-4F07-BEB2-58D3C765413C}.Release|AVR.Build.0 = Release|AVR
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

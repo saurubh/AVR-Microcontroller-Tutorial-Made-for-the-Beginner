@@ -1,0 +1,520 @@
+
+EEPROM STRING.elf:     file format elf32-avr
+
+Sections:
+Idx Name          Size      VMA       LMA       File off  Algn
+  0 .text         00000242  00000000  00000000  00000094  2**1
+                  CONTENTS, ALLOC, LOAD, READONLY, CODE
+  1 .data         0000000e  00800060  00000242  000002d6  2**0
+                  CONTENTS, ALLOC, LOAD, DATA
+  2 .bss          00000022  0080006e  0080006e  000002e4  2**0
+                  ALLOC
+  3 .comment      00000030  00000000  00000000  000002e4  2**0
+                  CONTENTS, READONLY
+  4 .debug_aranges 00000058  00000000  00000000  00000314  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  5 .debug_info   00000462  00000000  00000000  0000036c  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  6 .debug_abbrev 000001b2  00000000  00000000  000007ce  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  7 .debug_line   000001fb  00000000  00000000  00000980  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  8 .debug_frame  000000ec  00000000  00000000  00000b7c  2**2
+                  CONTENTS, READONLY, DEBUGGING
+  9 .debug_str    000001d8  00000000  00000000  00000c68  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 10 .debug_loc    000003b3  00000000  00000000  00000e40  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 11 .debug_ranges 00000060  00000000  00000000  000011f3  2**0
+                  CONTENTS, READONLY, DEBUGGING
+
+Disassembly of section .text:
+
+00000000 <__vectors>:
+   0:	12 c0       	rjmp	.+36     	; 0x26 <__ctors_end>
+   2:	2c c0       	rjmp	.+88     	; 0x5c <__bad_interrupt>
+   4:	2b c0       	rjmp	.+86     	; 0x5c <__bad_interrupt>
+   6:	2a c0       	rjmp	.+84     	; 0x5c <__bad_interrupt>
+   8:	29 c0       	rjmp	.+82     	; 0x5c <__bad_interrupt>
+   a:	28 c0       	rjmp	.+80     	; 0x5c <__bad_interrupt>
+   c:	27 c0       	rjmp	.+78     	; 0x5c <__bad_interrupt>
+   e:	26 c0       	rjmp	.+76     	; 0x5c <__bad_interrupt>
+  10:	25 c0       	rjmp	.+74     	; 0x5c <__bad_interrupt>
+  12:	24 c0       	rjmp	.+72     	; 0x5c <__bad_interrupt>
+  14:	23 c0       	rjmp	.+70     	; 0x5c <__bad_interrupt>
+  16:	22 c0       	rjmp	.+68     	; 0x5c <__bad_interrupt>
+  18:	21 c0       	rjmp	.+66     	; 0x5c <__bad_interrupt>
+  1a:	20 c0       	rjmp	.+64     	; 0x5c <__bad_interrupt>
+  1c:	1f c0       	rjmp	.+62     	; 0x5c <__bad_interrupt>
+  1e:	1e c0       	rjmp	.+60     	; 0x5c <__bad_interrupt>
+  20:	1d c0       	rjmp	.+58     	; 0x5c <__bad_interrupt>
+  22:	1c c0       	rjmp	.+56     	; 0x5c <__bad_interrupt>
+  24:	1b c0       	rjmp	.+54     	; 0x5c <__bad_interrupt>
+
+00000026 <__ctors_end>:
+  26:	11 24       	eor	r1, r1
+  28:	1f be       	out	0x3f, r1	; 63
+  2a:	cf e5       	ldi	r28, 0x5F	; 95
+  2c:	d4 e0       	ldi	r29, 0x04	; 4
+  2e:	de bf       	out	0x3e, r29	; 62
+  30:	cd bf       	out	0x3d, r28	; 61
+
+00000032 <__do_copy_data>:
+  32:	10 e0       	ldi	r17, 0x00	; 0
+  34:	a0 e6       	ldi	r26, 0x60	; 96
+  36:	b0 e0       	ldi	r27, 0x00	; 0
+  38:	e2 e4       	ldi	r30, 0x42	; 66
+  3a:	f2 e0       	ldi	r31, 0x02	; 2
+  3c:	02 c0       	rjmp	.+4      	; 0x42 <__SREG__+0x3>
+  3e:	05 90       	lpm	r0, Z+
+  40:	0d 92       	st	X+, r0
+  42:	ae 36       	cpi	r26, 0x6E	; 110
+  44:	b1 07       	cpc	r27, r17
+  46:	d9 f7       	brne	.-10     	; 0x3e <__SP_H__>
+
+00000048 <__do_clear_bss>:
+  48:	20 e0       	ldi	r18, 0x00	; 0
+  4a:	ae e6       	ldi	r26, 0x6E	; 110
+  4c:	b0 e0       	ldi	r27, 0x00	; 0
+  4e:	01 c0       	rjmp	.+2      	; 0x52 <.do_clear_bss_start>
+
+00000050 <.do_clear_bss_loop>:
+  50:	1d 92       	st	X+, r1
+
+00000052 <.do_clear_bss_start>:
+  52:	a0 39       	cpi	r26, 0x90	; 144
+  54:	b2 07       	cpc	r27, r18
+  56:	e1 f7       	brne	.-8      	; 0x50 <.do_clear_bss_loop>
+  58:	94 d0       	rcall	.+296    	; 0x182 <main>
+  5a:	f1 c0       	rjmp	.+482    	; 0x23e <_exit>
+
+0000005c <__bad_interrupt>:
+  5c:	d1 cf       	rjmp	.-94     	; 0x0 <__vectors>
+
+0000005e <EEPROM_read>:
+}
+
+//EEPROM read func
+void EEPROM_read(unsigned int uiAddress)
+{
+	for(int i=0;i<=count-1;i++)
+  5e:	20 91 6e 00 	lds	r18, 0x006E
+  62:	30 91 6f 00 	lds	r19, 0x006F
+  66:	21 50       	subi	r18, 0x01	; 1
+  68:	31 09       	sbc	r19, r1
+  6a:	33 23       	and	r19, r19
+  6c:	cc f0       	brlt	.+50     	; 0xa0 <EEPROM_read+0x42>
+  6e:	e0 e7       	ldi	r30, 0x70	; 112
+  70:	f0 e0       	ldi	r31, 0x00	; 0
+  72:	20 e0       	ldi	r18, 0x00	; 0
+  74:	30 e0       	ldi	r19, 0x00	; 0
+  76:	a9 01       	movw	r20, r18
+  78:	48 0f       	add	r20, r24
+  7a:	59 1f       	adc	r21, r25
+	{
+		/* Wait for completion of previous write */
+		while(EECR & (1<<EEWE))
+  7c:	e1 99       	sbic	0x1c, 1	; 28
+  7e:	fe cf       	rjmp	.-4      	; 0x7c <EEPROM_read+0x1e>
+		;
+		/* Set up address register */
+		EEAR = uiAddress;
+  80:	5f bb       	out	0x1f, r21	; 31
+  82:	4e bb       	out	0x1e, r20	; 30
+		uiAddress=uiAddress+1;
+		/* Start eeprom read by writing EERE */
+		EECR |= (1<<EERE);
+  84:	e0 9a       	sbi	0x1c, 0	; 28
+		/* Return data from data register */
+		b[i]= EEDR;
+  86:	4d b3       	in	r20, 0x1d	; 29
+  88:	41 93       	st	Z+, r20
+}
+
+//EEPROM read func
+void EEPROM_read(unsigned int uiAddress)
+{
+	for(int i=0;i<=count-1;i++)
+  8a:	2f 5f       	subi	r18, 0xFF	; 255
+  8c:	3f 4f       	sbci	r19, 0xFF	; 255
+  8e:	40 91 6e 00 	lds	r20, 0x006E
+  92:	50 91 6f 00 	lds	r21, 0x006F
+  96:	41 50       	subi	r20, 0x01	; 1
+  98:	51 09       	sbc	r21, r1
+  9a:	42 17       	cp	r20, r18
+  9c:	53 07       	cpc	r21, r19
+  9e:	5c f7       	brge	.-42     	; 0x76 <EEPROM_read+0x18>
+		/* Start eeprom read by writing EERE */
+		EECR |= (1<<EERE);
+		/* Return data from data register */
+		b[i]= EEDR;
+	}
+	count=0;
+  a0:	10 92 6f 00 	sts	0x006F, r1
+  a4:	10 92 6e 00 	sts	0x006E, r1
+  a8:	08 95       	ret
+
+000000aa <command_shift>:
+	z=((a<<4) & 0xf0);
+	data_shift(z);
+}
+void command_shift(unsigned char b)					// to give command to LCD like which position we want to show data
+{
+	PORTD = b;
+  aa:	82 bb       	out	0x12, r24	; 18
+	PORTD &= ~(1<<rs);
+  ac:	90 98       	cbi	0x12, 0	; 18
+	PORTD |= (1<<en);
+  ae:	91 9a       	sbi	0x12, 1	; 18
+	#else
+		//round up by default
+		__ticks_dc = (uint32_t)(ceil(fabs(__tmp)));
+	#endif
+
+	__builtin_avr_delay_cycles(__ticks_dc);
+  b0:	89 ef       	ldi	r24, 0xF9	; 249
+  b2:	90 e0       	ldi	r25, 0x00	; 0
+  b4:	01 97       	sbiw	r24, 0x01	; 1
+  b6:	f1 f7       	brne	.-4      	; 0xb4 <command_shift+0xa>
+  b8:	00 c0       	rjmp	.+0      	; 0xba <command_shift+0x10>
+  ba:	00 00       	nop
+	_delay_ms(1);
+	PORTD &= ~(1<<en);
+  bc:	91 98       	cbi	0x12, 1	; 18
+  be:	08 95       	ret
+
+000000c0 <command>:
+	command(0x0c);						//to hide cursor
+	//command(0x0e);						//to show cursor
+	//command(0x01);						//to clear LCD completely
+}
+void command(unsigned char a)
+{
+  c0:	cf 93       	push	r28
+  c2:	c8 2f       	mov	r28, r24
+	char z;
+	z=a & 0xf0;
+	command_shift(z);
+  c4:	80 7f       	andi	r24, 0xF0	; 240
+  c6:	f1 df       	rcall	.-30     	; 0xaa <command_shift>
+	z=((a<<4) & 0xf0);
+	command_shift(z);
+  c8:	8c 2f       	mov	r24, r28
+  ca:	82 95       	swap	r24
+  cc:	80 7f       	andi	r24, 0xF0	; 240
+  ce:	ed df       	rcall	.-38     	; 0xaa <command_shift>
+}
+  d0:	cf 91       	pop	r28
+  d2:	08 95       	ret
+
+000000d4 <lcd_init>:
+// LCD COMAND SET
+
+// func declaration
+void lcd_init()							// to initialize LCD
+{
+	command(0x02);						//4bit LCD select
+  d4:	82 e0       	ldi	r24, 0x02	; 2
+  d6:	f4 df       	rcall	.-24     	; 0xc0 <command>
+	command(0x28);						//LCD init basic command(4bit LCD, 2 lines, 5X7
+  d8:	88 e2       	ldi	r24, 0x28	; 40
+  da:	f2 df       	rcall	.-28     	; 0xc0 <command>
+	command(0x06);						//LCD init basic command
+  dc:	86 e0       	ldi	r24, 0x06	; 6
+  de:	f0 df       	rcall	.-32     	; 0xc0 <command>
+	command(0x0c);						//to hide cursor
+  e0:	8c e0       	ldi	r24, 0x0C	; 12
+  e2:	ee df       	rcall	.-36     	; 0xc0 <command>
+  e4:	08 95       	ret
+
+000000e6 <data_shift>:
+	_delay_ms(1);
+	PORTD &= ~(1<<en);
+}
+void data_shift(unsigned char b)
+{
+	PORTD = b;
+  e6:	82 bb       	out	0x12, r24	; 18
+	PORTD |= (1<<rs);
+  e8:	90 9a       	sbi	0x12, 0	; 18
+	PORTD |= (1<<en);
+  ea:	91 9a       	sbi	0x12, 1	; 18
+  ec:	89 ef       	ldi	r24, 0xF9	; 249
+  ee:	90 e0       	ldi	r25, 0x00	; 0
+  f0:	01 97       	sbiw	r24, 0x01	; 1
+  f2:	f1 f7       	brne	.-4      	; 0xf0 <data_shift+0xa>
+  f4:	00 c0       	rjmp	.+0      	; 0xf6 <data_shift+0x10>
+  f6:	00 00       	nop
+	_delay_ms(1);
+	PORTD &= ~(1<<en);
+  f8:	91 98       	cbi	0x12, 1	; 18
+  fa:	08 95       	ret
+
+000000fc <data>:
+	command_shift(z);
+	z=((a<<4) & 0xf0);
+	command_shift(z);
+}
+void data(unsigned char a)
+{
+  fc:	cf 93       	push	r28
+  fe:	c8 2f       	mov	r28, r24
+	char z;
+	z=a & 0xf0;
+	data_shift(z);
+ 100:	80 7f       	andi	r24, 0xF0	; 240
+ 102:	f1 df       	rcall	.-30     	; 0xe6 <data_shift>
+	z=((a<<4) & 0xf0);
+	data_shift(z);
+ 104:	8c 2f       	mov	r24, r28
+ 106:	82 95       	swap	r24
+ 108:	80 7f       	andi	r24, 0xF0	; 240
+ 10a:	ed df       	rcall	.-38     	; 0xe6 <data_shift>
+}
+ 10c:	cf 91       	pop	r28
+ 10e:	08 95       	ret
+
+00000110 <EEPROM_write>:
+
+// func declaration
+
+//EEPROM write func
+void EEPROM_write(unsigned int uiAddress, char *p)
+{
+ 110:	0f 93       	push	r16
+ 112:	1f 93       	push	r17
+ 114:	cf 93       	push	r28
+ 116:	df 93       	push	r29
+ 118:	eb 01       	movw	r28, r22
+	command(0x80);
+ 11a:	80 e8       	ldi	r24, 0x80	; 128
+ 11c:	d1 df       	rcall	.-94     	; 0xc0 <command>
+	uiAddress=0x00;
+	while(*p != '\0')
+ 11e:	88 81       	ld	r24, Y
+ 120:	88 23       	and	r24, r24
+ 122:	51 f1       	breq	.+84     	; 0x178 <EEPROM_write+0x68>
+
+//EEPROM write func
+void EEPROM_write(unsigned int uiAddress, char *p)
+{
+	command(0x80);
+	uiAddress=0x00;
+ 124:	00 e0       	ldi	r16, 0x00	; 0
+ 126:	10 e0       	ldi	r17, 0x00	; 0
+	while(*p != '\0')
+	{
+		/* Wait for completion of previous write */
+		while(EECR & (1<<EEWE));
+ 128:	e1 99       	sbic	0x1c, 1	; 28
+ 12a:	fe cf       	rjmp	.-4      	; 0x128 <EEPROM_write+0x18>
+		/* Set up address and data registers */
+		EEAR = uiAddress;
+ 12c:	1f bb       	out	0x1f, r17	; 31
+ 12e:	0e bb       	out	0x1e, r16	; 30
+		EEDR = *p;
+ 130:	88 81       	ld	r24, Y
+ 132:	8d bb       	out	0x1d, r24	; 29
+		a[count]=*p;
+ 134:	88 81       	ld	r24, Y
+ 136:	e0 91 6e 00 	lds	r30, 0x006E
+ 13a:	f0 91 6f 00 	lds	r31, 0x006F
+ 13e:	ef 57       	subi	r30, 0x7F	; 127
+ 140:	ff 4f       	sbci	r31, 0xFF	; 255
+ 142:	80 83       	st	Z, r24
+		data(*p);
+ 144:	89 91       	ld	r24, Y+
+ 146:	da df       	rcall	.-76     	; 0xfc <data>
+		*p++;
+		uiAddress = uiAddress + 1;
+ 148:	0f 5f       	subi	r16, 0xFF	; 255
+ 14a:	1f 4f       	sbci	r17, 0xFF	; 255
+		count++;
+ 14c:	80 91 6e 00 	lds	r24, 0x006E
+ 150:	90 91 6f 00 	lds	r25, 0x006F
+ 154:	01 96       	adiw	r24, 0x01	; 1
+ 156:	90 93 6f 00 	sts	0x006F, r25
+ 15a:	80 93 6e 00 	sts	0x006E, r24
+		/* Write logical one to EEMWE */
+		EECR |= (1<<EEMWE);
+ 15e:	e2 9a       	sbi	0x1c, 2	; 28
+		/* Start eeprom write by setting EEWE */
+		EECR |= (1<<EEWE);
+ 160:	e1 9a       	sbi	0x1c, 1	; 28
+		z=count;
+ 162:	80 91 6e 00 	lds	r24, 0x006E
+ 166:	90 91 6f 00 	lds	r25, 0x006F
+ 16a:	90 93 80 00 	sts	0x0080, r25
+ 16e:	80 93 7f 00 	sts	0x007F, r24
+//EEPROM write func
+void EEPROM_write(unsigned int uiAddress, char *p)
+{
+	command(0x80);
+	uiAddress=0x00;
+	while(*p != '\0')
+ 172:	88 81       	ld	r24, Y
+ 174:	81 11       	cpse	r24, r1
+ 176:	d8 cf       	rjmp	.-80     	; 0x128 <EEPROM_write+0x18>
+		EECR |= (1<<EEMWE);
+		/* Start eeprom write by setting EEWE */
+		EECR |= (1<<EEWE);
+		z=count;
+	}
+}
+ 178:	df 91       	pop	r29
+ 17a:	cf 91       	pop	r28
+ 17c:	1f 91       	pop	r17
+ 17e:	0f 91       	pop	r16
+ 180:	08 95       	ret
+
+00000182 <main>:
+char b[15],a[15];
+void EEPROM_write(unsigned int uiAddress, char *p);
+void EEPROM_read(unsigned int uiAddress);
+
+int main(void)
+{
+ 182:	af 92       	push	r10
+ 184:	bf 92       	push	r11
+ 186:	cf 92       	push	r12
+ 188:	df 92       	push	r13
+ 18a:	ef 92       	push	r14
+ 18c:	ff 92       	push	r15
+ 18e:	0f 93       	push	r16
+ 190:	1f 93       	push	r17
+ 192:	cf 93       	push	r28
+ 194:	df 93       	push	r29
+	DDRB=0xff;      // initialize port B as o/p port
+ 196:	8f ef       	ldi	r24, 0xFF	; 255
+ 198:	87 bb       	out	0x17, r24	; 23
+	DDRD=0xff;
+ 19a:	81 bb       	out	0x11, r24	; 17
+	lcd_init();
+ 19c:	9b df       	rcall	.-202    	; 0xd4 <lcd_init>
+	int cnt=0;
+	//while(1)
+	{
+		PORTB=0x00;
+ 19e:	18 ba       	out	0x18, r1	; 24
+		EEPROM_write(0x00,"ADITYA MUDGAL");
+ 1a0:	60 e6       	ldi	r22, 0x60	; 96
+ 1a2:	70 e0       	ldi	r23, 0x00	; 0
+ 1a4:	80 e0       	ldi	r24, 0x00	; 0
+ 1a6:	90 e0       	ldi	r25, 0x00	; 0
+ 1a8:	b3 df       	rcall	.-154    	; 0x110 <EEPROM_write>
+		EEPROM_read(0x00);
+ 1aa:	80 e0       	ldi	r24, 0x00	; 0
+ 1ac:	90 e0       	ldi	r25, 0x00	; 0
+ 1ae:	57 df       	rcall	.-338    	; 0x5e <EEPROM_read>
+		command(0xc0);
+ 1b0:	80 ec       	ldi	r24, 0xC0	; 192
+ 1b2:	86 df       	rcall	.-244    	; 0xc0 <command>
+		for(int i=0;i<=z-1;i++)
+ 1b4:	80 91 7f 00 	lds	r24, 0x007F
+ 1b8:	90 91 80 00 	lds	r25, 0x0080
+ 1bc:	9c 01       	movw	r18, r24
+ 1be:	21 50       	subi	r18, 0x01	; 1
+ 1c0:	31 09       	sbc	r19, r1
+ 1c2:	33 23       	and	r19, r19
+ 1c4:	34 f1       	brlt	.+76     	; 0x212 <main+0x90>
+ 1c6:	0f 2e       	mov	r0, r31
+ 1c8:	f1 e8       	ldi	r31, 0x81	; 129
+ 1ca:	ef 2e       	mov	r14, r31
+ 1cc:	f0 e0       	ldi	r31, 0x00	; 0
+ 1ce:	ff 2e       	mov	r15, r31
+ 1d0:	f0 2d       	mov	r31, r0
+ 1d2:	c0 e7       	ldi	r28, 0x70	; 112
+ 1d4:	d0 e0       	ldi	r29, 0x00	; 0
+ 1d6:	00 e0       	ldi	r16, 0x00	; 0
+ 1d8:	10 e0       	ldi	r17, 0x00	; 0
+int main(void)
+{
+	DDRB=0xff;      // initialize port B as o/p port
+	DDRD=0xff;
+	lcd_init();
+	int cnt=0;
+ 1da:	c1 2c       	mov	r12, r1
+ 1dc:	d1 2c       	mov	r13, r1
+ 1de:	5e 01       	movw	r10, r28
+		EEPROM_write(0x00,"ADITYA MUDGAL");
+		EEPROM_read(0x00);
+		command(0xc0);
+		for(int i=0;i<=z-1;i++)
+		{
+			data(b[i]);
+ 1e0:	89 91       	ld	r24, Y+
+ 1e2:	8c df       	rcall	.-232    	; 0xfc <data>
+			if(a[i]==b[i])
+ 1e4:	f7 01       	movw	r30, r14
+ 1e6:	91 91       	ld	r25, Z+
+ 1e8:	7f 01       	movw	r14, r30
+ 1ea:	f5 01       	movw	r30, r10
+ 1ec:	80 81       	ld	r24, Z
+ 1ee:	98 13       	cpse	r25, r24
+ 1f0:	03 c0       	rjmp	.+6      	; 0x1f8 <main+0x76>
+				cnt++;					
+ 1f2:	ff ef       	ldi	r31, 0xFF	; 255
+ 1f4:	cf 1a       	sub	r12, r31
+ 1f6:	df 0a       	sbc	r13, r31
+	{
+		PORTB=0x00;
+		EEPROM_write(0x00,"ADITYA MUDGAL");
+		EEPROM_read(0x00);
+		command(0xc0);
+		for(int i=0;i<=z-1;i++)
+ 1f8:	0f 5f       	subi	r16, 0xFF	; 255
+ 1fa:	1f 4f       	sbci	r17, 0xFF	; 255
+ 1fc:	80 91 7f 00 	lds	r24, 0x007F
+ 200:	90 91 80 00 	lds	r25, 0x0080
+ 204:	9c 01       	movw	r18, r24
+ 206:	21 50       	subi	r18, 0x01	; 1
+ 208:	31 09       	sbc	r19, r1
+ 20a:	20 17       	cp	r18, r16
+ 20c:	31 07       	cpc	r19, r17
+ 20e:	3c f7       	brge	.-50     	; 0x1de <main+0x5c>
+ 210:	02 c0       	rjmp	.+4      	; 0x216 <main+0x94>
+int main(void)
+{
+	DDRB=0xff;      // initialize port B as o/p port
+	DDRD=0xff;
+	lcd_init();
+	int cnt=0;
+ 212:	c1 2c       	mov	r12, r1
+ 214:	d1 2c       	mov	r13, r1
+		{
+			data(b[i]);
+			if(a[i]==b[i])
+				cnt++;					
+		}
+		if(cnt==z)
+ 216:	c8 16       	cp	r12, r24
+ 218:	d9 06       	cpc	r13, r25
+ 21a:	19 f4       	brne	.+6      	; 0x222 <main+0xa0>
+			PORTB=0x01;
+ 21c:	81 e0       	ldi	r24, 0x01	; 1
+ 21e:	88 bb       	out	0x18, r24	; 24
+ 220:	01 c0       	rjmp	.+2      	; 0x224 <main+0xa2>
+		else
+			PORTB=0x00;
+ 222:	18 ba       	out	0x18, r1	; 24
+	}
+}
+ 224:	80 e0       	ldi	r24, 0x00	; 0
+ 226:	90 e0       	ldi	r25, 0x00	; 0
+ 228:	df 91       	pop	r29
+ 22a:	cf 91       	pop	r28
+ 22c:	1f 91       	pop	r17
+ 22e:	0f 91       	pop	r16
+ 230:	ff 90       	pop	r15
+ 232:	ef 90       	pop	r14
+ 234:	df 90       	pop	r13
+ 236:	cf 90       	pop	r12
+ 238:	bf 90       	pop	r11
+ 23a:	af 90       	pop	r10
+ 23c:	08 95       	ret
+
+0000023e <_exit>:
+ 23e:	f8 94       	cli
+
+00000240 <__stop_program>:
+ 240:	ff cf       	rjmp	.-2      	; 0x240 <__stop_program>

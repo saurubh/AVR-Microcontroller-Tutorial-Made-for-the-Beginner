@@ -1,0 +1,20 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Atmel Studio Solution File, Format Version 11.00
+Project("{54F91283-7BC4-4236-8FF9-10F437C3AD48}") = "data using 4bit", "data using 4bit\data using 4bit.cproj", "{6790AFB1-DEC1-48C7-9E9F-181E7115E030}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|AVR = Debug|AVR
+		Release|AVR = Release|AVR
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{6790AFB1-DEC1-48C7-9E9F-181E7115E030}.Debug|AVR.ActiveCfg = Debug|AVR
+		{6790AFB1-DEC1-48C7-9E9F-181E7115E030}.Debug|AVR.Build.0 = Debug|AVR
+		{6790AFB1-DEC1-48C7-9E9F-181E7115E030}.Release|AVR.ActiveCfg = Release|AVR
+		{6790AFB1-DEC1-48C7-9E9F-181E7115E030}.Release|AVR.Build.0 = Release|AVR
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

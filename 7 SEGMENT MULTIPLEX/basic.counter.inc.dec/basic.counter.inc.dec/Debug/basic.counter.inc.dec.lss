@@ -1,0 +1,249 @@
+
+basic.counter.inc.dec.elf:     file format elf32-avr
+
+Sections:
+Idx Name          Size      VMA       LMA       File off  Algn
+  0 .text         00000102  00000000  00000000  00000074  2**1
+                  CONTENTS, ALLOC, LOAD, READONLY, CODE
+  1 .data         00000014  00800060  00000102  00000176  2**0
+                  CONTENTS, ALLOC, LOAD, DATA
+  2 .comment      00000030  00000000  00000000  0000018a  2**0
+                  CONTENTS, READONLY
+  3 .debug_aranges 00000020  00000000  00000000  000001ba  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  4 .debug_info   00000182  00000000  00000000  000001da  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  5 .debug_abbrev 000000fc  00000000  00000000  0000035c  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  6 .debug_line   0000015d  00000000  00000000  00000458  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  7 .debug_frame  00000034  00000000  00000000  000005b8  2**2
+                  CONTENTS, READONLY, DEBUGGING
+  8 .debug_str    00000198  00000000  00000000  000005ec  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  9 .debug_loc    0000019b  00000000  00000000  00000784  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 10 .debug_ranges 00000010  00000000  00000000  0000091f  2**0
+                  CONTENTS, READONLY, DEBUGGING
+
+Disassembly of section .text:
+
+00000000 <__vectors>:
+   0:	12 c0       	rjmp	.+36     	; 0x26 <__ctors_end>
+   2:	24 c0       	rjmp	.+72     	; 0x4c <__bad_interrupt>
+   4:	23 c0       	rjmp	.+70     	; 0x4c <__bad_interrupt>
+   6:	22 c0       	rjmp	.+68     	; 0x4c <__bad_interrupt>
+   8:	21 c0       	rjmp	.+66     	; 0x4c <__bad_interrupt>
+   a:	20 c0       	rjmp	.+64     	; 0x4c <__bad_interrupt>
+   c:	1f c0       	rjmp	.+62     	; 0x4c <__bad_interrupt>
+   e:	1e c0       	rjmp	.+60     	; 0x4c <__bad_interrupt>
+  10:	1d c0       	rjmp	.+58     	; 0x4c <__bad_interrupt>
+  12:	1c c0       	rjmp	.+56     	; 0x4c <__bad_interrupt>
+  14:	1b c0       	rjmp	.+54     	; 0x4c <__bad_interrupt>
+  16:	1a c0       	rjmp	.+52     	; 0x4c <__bad_interrupt>
+  18:	19 c0       	rjmp	.+50     	; 0x4c <__bad_interrupt>
+  1a:	18 c0       	rjmp	.+48     	; 0x4c <__bad_interrupt>
+  1c:	17 c0       	rjmp	.+46     	; 0x4c <__bad_interrupt>
+  1e:	16 c0       	rjmp	.+44     	; 0x4c <__bad_interrupt>
+  20:	15 c0       	rjmp	.+42     	; 0x4c <__bad_interrupt>
+  22:	14 c0       	rjmp	.+40     	; 0x4c <__bad_interrupt>
+  24:	13 c0       	rjmp	.+38     	; 0x4c <__bad_interrupt>
+
+00000026 <__ctors_end>:
+  26:	11 24       	eor	r1, r1
+  28:	1f be       	out	0x3f, r1	; 63
+  2a:	cf e5       	ldi	r28, 0x5F	; 95
+  2c:	d4 e0       	ldi	r29, 0x04	; 4
+  2e:	de bf       	out	0x3e, r29	; 62
+  30:	cd bf       	out	0x3d, r28	; 61
+
+00000032 <__do_copy_data>:
+  32:	10 e0       	ldi	r17, 0x00	; 0
+  34:	a0 e6       	ldi	r26, 0x60	; 96
+  36:	b0 e0       	ldi	r27, 0x00	; 0
+  38:	e2 e0       	ldi	r30, 0x02	; 2
+  3a:	f1 e0       	ldi	r31, 0x01	; 1
+  3c:	02 c0       	rjmp	.+4      	; 0x42 <__SREG__+0x3>
+  3e:	05 90       	lpm	r0, Z+
+  40:	0d 92       	st	X+, r0
+  42:	a4 37       	cpi	r26, 0x74	; 116
+  44:	b1 07       	cpc	r27, r17
+  46:	d9 f7       	brne	.-10     	; 0x3e <__SP_H__>
+  48:	02 d0       	rcall	.+4      	; 0x4e <main>
+  4a:	59 c0       	rjmp	.+178    	; 0xfe <_exit>
+
+0000004c <__bad_interrupt>:
+  4c:	d9 cf       	rjmp	.-78     	; 0x0 <__vectors>
+
+0000004e <main>:
+
+#include <avr/io.h>
+#include <util/delay.h>
+
+int main(void)
+{
+  4e:	cf 93       	push	r28
+  50:	df 93       	push	r29
+  52:	cd b7       	in	r28, 0x3d	; 61
+  54:	de b7       	in	r29, 0x3e	; 62
+  56:	64 97       	sbiw	r28, 0x14	; 20
+  58:	0f b6       	in	r0, 0x3f	; 63
+  5a:	f8 94       	cli
+  5c:	de bf       	out	0x3e, r29	; 62
+  5e:	0f be       	out	0x3f, r0	; 63
+  60:	cd bf       	out	0x3d, r28	; 61
+	DDRB|=0x03;		
+  62:	87 b3       	in	r24, 0x17	; 23
+  64:	83 60       	ori	r24, 0x03	; 3
+  66:	87 bb       	out	0x17, r24	; 23
+	// 0x03 means 0000 0011 and it enables 1st and 2nd pin as o/p pin(coz 1 means o/p only remaining pins remains unchanged due to use of ORing function. as ORing means addition
+	DDRB&=0xfb;
+  68:	ba 98       	cbi	0x17, 2	; 23
+	// 0xfb means 1111 1011 and it enables 3rd pin as i/p pin only remaining pins remains unchanged due to use of ANDing function. as ANDing means product
+	DDRD=0xff;
+  6a:	8f ef       	ldi	r24, 0xFF	; 255
+  6c:	81 bb       	out	0x11, r24	; 17
+	int i=0,j=0;
+	int a[10]={0x3f,0x06,0x5b,0x4f,0x66,0x6d,0x7d,0x07,0x7f,0x6f};		// values in array a[10]={0,1,2,3,4,5,6,7,8,9}
+  6e:	84 e1       	ldi	r24, 0x14	; 20
+  70:	e0 e6       	ldi	r30, 0x60	; 96
+  72:	f0 e0       	ldi	r31, 0x00	; 0
+  74:	de 01       	movw	r26, r28
+  76:	11 96       	adiw	r26, 0x01	; 1
+  78:	01 90       	ld	r0, Z+
+  7a:	0d 92       	st	X+, r0
+  7c:	8a 95       	dec	r24
+  7e:	e1 f7       	brne	.-8      	; 0x78 <main+0x2a>
+	DDRB|=0x03;		
+	// 0x03 means 0000 0011 and it enables 1st and 2nd pin as o/p pin(coz 1 means o/p only remaining pins remains unchanged due to use of ORing function. as ORing means addition
+	DDRB&=0xfb;
+	// 0xfb means 1111 1011 and it enables 3rd pin as i/p pin only remaining pins remains unchanged due to use of ANDing function. as ANDing means product
+	DDRD=0xff;
+	int i=0,j=0;
+  80:	20 e0       	ldi	r18, 0x00	; 0
+  82:	30 e0       	ldi	r19, 0x00	; 0
+  84:	80 e0       	ldi	r24, 0x00	; 0
+  86:	90 e0       	ldi	r25, 0x00	; 0
+	int a[10]={0x3f,0x06,0x5b,0x4f,0x66,0x6d,0x7d,0x07,0x7f,0x6f};		// values in array a[10]={0,1,2,3,4,5,6,7,8,9}
+    while(1)
+    {
+	// for continues show/display of data	
+     	PORTB=0x01;				// 1st 7seg				
+  88:	61 e0       	ldi	r22, 0x01	; 1
+     	PORTD=a[i];
+     	_delay_ms(100);
+     	
+     	PORTB=0x02;				// 2nd 7seg
+  8a:	52 e0       	ldi	r21, 0x02	; 2
+
+		//	now it inc the values of i and j as per requirement and calculation
+				i++;
+				if(i==10)
+				{
+					i=0;
+  8c:	a0 e0       	ldi	r26, 0x00	; 0
+  8e:	70 e0       	ldi	r23, 0x00	; 0
+  90:	04 c0       	rjmp	.+8      	; 0x9a <main+0x4c>
+					j++;
+					if(j==10)
+						j=0;				
+  92:	2a 2f       	mov	r18, r26
+  94:	37 2f       	mov	r19, r23
+
+		//	now it inc the values of i and j as per requirement and calculation
+				i++;
+				if(i==10)
+				{
+					i=0;
+  96:	8a 2f       	mov	r24, r26
+  98:	97 2f       	mov	r25, r23
+	int i=0,j=0;
+	int a[10]={0x3f,0x06,0x5b,0x4f,0x66,0x6d,0x7d,0x07,0x7f,0x6f};		// values in array a[10]={0,1,2,3,4,5,6,7,8,9}
+    while(1)
+    {
+	// for continues show/display of data	
+     	PORTB=0x01;				// 1st 7seg				
+  9a:	68 bb       	out	0x18, r22	; 24
+     	PORTD=a[i];
+  9c:	fc 01       	movw	r30, r24
+  9e:	ee 0f       	add	r30, r30
+  a0:	ff 1f       	adc	r31, r31
+  a2:	01 e0       	ldi	r16, 0x01	; 1
+  a4:	10 e0       	ldi	r17, 0x00	; 0
+  a6:	0c 0f       	add	r16, r28
+  a8:	1d 1f       	adc	r17, r29
+  aa:	e0 0f       	add	r30, r16
+  ac:	f1 1f       	adc	r31, r17
+  ae:	40 81       	ld	r20, Z
+  b0:	42 bb       	out	0x12, r20	; 18
+	#else
+		//round up by default
+		__ticks_dc = (uint32_t)(ceil(fabs(__tmp)));
+	#endif
+
+	__builtin_avr_delay_cycles(__ticks_dc);
+  b2:	e7 ea       	ldi	r30, 0xA7	; 167
+  b4:	f1 e6       	ldi	r31, 0x61	; 97
+  b6:	31 97       	sbiw	r30, 0x01	; 1
+  b8:	f1 f7       	brne	.-4      	; 0xb6 <main+0x68>
+  ba:	00 c0       	rjmp	.+0      	; 0xbc <main+0x6e>
+  bc:	00 00       	nop
+     	_delay_ms(100);
+     	
+     	PORTB=0x02;				// 2nd 7seg
+  be:	58 bb       	out	0x18, r21	; 24
+     	PORTD=a[j];
+  c0:	f9 01       	movw	r30, r18
+  c2:	ee 0f       	add	r30, r30
+  c4:	ff 1f       	adc	r31, r31
+  c6:	01 e0       	ldi	r16, 0x01	; 1
+  c8:	10 e0       	ldi	r17, 0x00	; 0
+  ca:	0c 0f       	add	r16, r28
+  cc:	1d 1f       	adc	r17, r29
+  ce:	e0 0f       	add	r30, r16
+  d0:	f1 1f       	adc	r31, r17
+  d2:	40 81       	ld	r20, Z
+  d4:	42 bb       	out	0x12, r20	; 18
+  d6:	e7 ea       	ldi	r30, 0xA7	; 167
+  d8:	f1 e6       	ldi	r31, 0x61	; 97
+  da:	31 97       	sbiw	r30, 0x01	; 1
+  dc:	f1 f7       	brne	.-4      	; 0xda <main+0x8c>
+  de:	00 c0       	rjmp	.+0      	; 0xe0 <main+0x92>
+  e0:	00 00       	nop
+     	_delay_ms(100);
+		 if(PINB & 0x04)
+  e2:	b2 9b       	sbis	0x16, 2	; 22
+  e4:	da cf       	rjmp	.-76     	; 0x9a <main+0x4c>
+		{
+
+		//	now it inc the values of i and j as per requirement and calculation
+				i++;
+  e6:	01 96       	adiw	r24, 0x01	; 1
+				if(i==10)
+  e8:	8a 30       	cpi	r24, 0x0A	; 10
+  ea:	91 05       	cpc	r25, r1
+  ec:	b1 f6       	brne	.-84     	; 0x9a <main+0x4c>
+				{
+					i=0;
+					j++;
+  ee:	2f 5f       	subi	r18, 0xFF	; 255
+  f0:	3f 4f       	sbci	r19, 0xFF	; 255
+					if(j==10)
+  f2:	2a 30       	cpi	r18, 0x0A	; 10
+  f4:	31 05       	cpc	r19, r1
+  f6:	69 f2       	breq	.-102    	; 0x92 <main+0x44>
+
+		//	now it inc the values of i and j as per requirement and calculation
+				i++;
+				if(i==10)
+				{
+					i=0;
+  f8:	8a 2f       	mov	r24, r26
+  fa:	97 2f       	mov	r25, r23
+  fc:	ce cf       	rjmp	.-100    	; 0x9a <main+0x4c>
+
+000000fe <_exit>:
+  fe:	f8 94       	cli
+
+00000100 <__stop_program>:
+ 100:	ff cf       	rjmp	.-2      	; 0x100 <__stop_program>

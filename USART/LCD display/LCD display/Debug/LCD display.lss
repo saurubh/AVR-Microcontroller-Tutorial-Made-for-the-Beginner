@@ -1,0 +1,251 @@
+
+LCD display.elf:     file format elf32-avr
+
+Sections:
+Idx Name          Size      VMA       LMA       File off  Algn
+  0 .text         000000ca  00000000  00000000  00000074  2**1
+                  CONTENTS, ALLOC, LOAD, READONLY, CODE
+  1 .data         00000000  00800060  000000ca  0000013e  2**0
+                  CONTENTS, ALLOC, LOAD, DATA
+  2 .comment      00000030  00000000  00000000  0000013e  2**0
+                  CONTENTS, READONLY
+  3 .debug_aranges 00000060  00000000  00000000  0000016e  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  4 .debug_info   00000393  00000000  00000000  000001ce  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  5 .debug_abbrev 0000019e  00000000  00000000  00000561  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  6 .debug_line   000001e4  00000000  00000000  000006ff  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  7 .debug_frame  000000b4  00000000  00000000  000008e4  2**2
+                  CONTENTS, READONLY, DEBUGGING
+  8 .debug_str    000001cb  00000000  00000000  00000998  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  9 .debug_loc    000001b7  00000000  00000000  00000b63  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 10 .debug_ranges 00000050  00000000  00000000  00000d1a  2**0
+                  CONTENTS, READONLY, DEBUGGING
+
+Disassembly of section .text:
+
+00000000 <__vectors>:
+   0:	12 c0       	rjmp	.+36     	; 0x26 <__ctors_end>
+   2:	19 c0       	rjmp	.+50     	; 0x36 <__bad_interrupt>
+   4:	18 c0       	rjmp	.+48     	; 0x36 <__bad_interrupt>
+   6:	17 c0       	rjmp	.+46     	; 0x36 <__bad_interrupt>
+   8:	16 c0       	rjmp	.+44     	; 0x36 <__bad_interrupt>
+   a:	15 c0       	rjmp	.+42     	; 0x36 <__bad_interrupt>
+   c:	14 c0       	rjmp	.+40     	; 0x36 <__bad_interrupt>
+   e:	13 c0       	rjmp	.+38     	; 0x36 <__bad_interrupt>
+  10:	12 c0       	rjmp	.+36     	; 0x36 <__bad_interrupt>
+  12:	11 c0       	rjmp	.+34     	; 0x36 <__bad_interrupt>
+  14:	10 c0       	rjmp	.+32     	; 0x36 <__bad_interrupt>
+  16:	0f c0       	rjmp	.+30     	; 0x36 <__bad_interrupt>
+  18:	0e c0       	rjmp	.+28     	; 0x36 <__bad_interrupt>
+  1a:	0d c0       	rjmp	.+26     	; 0x36 <__bad_interrupt>
+  1c:	0c c0       	rjmp	.+24     	; 0x36 <__bad_interrupt>
+  1e:	0b c0       	rjmp	.+22     	; 0x36 <__bad_interrupt>
+  20:	0a c0       	rjmp	.+20     	; 0x36 <__bad_interrupt>
+  22:	09 c0       	rjmp	.+18     	; 0x36 <__bad_interrupt>
+  24:	08 c0       	rjmp	.+16     	; 0x36 <__bad_interrupt>
+
+00000026 <__ctors_end>:
+  26:	11 24       	eor	r1, r1
+  28:	1f be       	out	0x3f, r1	; 63
+  2a:	cf e5       	ldi	r28, 0x5F	; 95
+  2c:	d4 e0       	ldi	r29, 0x04	; 4
+  2e:	de bf       	out	0x3e, r29	; 62
+  30:	cd bf       	out	0x3d, r28	; 61
+  32:	40 d0       	rcall	.+128    	; 0xb4 <main>
+  34:	48 c0       	rjmp	.+144    	; 0xc6 <_exit>
+
+00000036 <__bad_interrupt>:
+  36:	e4 cf       	rjmp	.-56     	; 0x0 <__vectors>
+
+00000038 <USART_Init>:
+// func declaration
+//USART init,transmitt, receiver
+void USART_Init( unsigned int ubrr)
+{
+	/* Set baud rate */
+	UBRRH = (unsigned char)(ubrr>>8);
+  38:	90 bd       	out	0x20, r25	; 32
+	UBRRL = (unsigned char)ubrr;
+  3a:	89 b9       	out	0x09, r24	; 9
+	/* Enable receiver and transmitter */
+	UCSRB = (1<<RXEN)|(1<<TXEN);
+  3c:	88 e1       	ldi	r24, 0x18	; 24
+  3e:	8a b9       	out	0x0a, r24	; 10
+	/* Set frame format: 8data, 2stop bit */
+	UCSRC = (1<<URSEL)|(1<<USBS)|(3<<UCSZ0);
+  40:	8e e8       	ldi	r24, 0x8E	; 142
+  42:	80 bd       	out	0x20, r24	; 32
+  44:	08 95       	ret
+
+00000046 <USART_Receive>:
+	UDR = data;
+}
+unsigned char USART_Receive( void )
+{
+	/* Wait for data to be received */
+	while ( !(UCSRA & (1<<RXC)) )
+  46:	5f 9b       	sbis	0x0b, 7	; 11
+  48:	fe cf       	rjmp	.-4      	; 0x46 <USART_Receive>
+	;
+	/* Get and return received data from buffer */
+	return UDR;
+  4a:	8c b1       	in	r24, 0x0c	; 12
+}
+  4c:	08 95       	ret
+
+0000004e <command_shift>:
+	//z=a & 0xf0;
+	data_shift(z);
+}
+void command_shift(unsigned char b)					// to give command to LCD like which position we want to show data
+{
+	PORTB = b;
+  4e:	88 bb       	out	0x18, r24	; 24
+	PORTB &= ~(1<<rs);
+  50:	c0 98       	cbi	0x18, 0	; 24
+	PORTB |= (1<<en);
+  52:	c1 9a       	sbi	0x18, 1	; 24
+	#else
+		//round up by default
+		__ticks_dc = (uint32_t)(ceil(fabs(__tmp)));
+	#endif
+
+	__builtin_avr_delay_cycles(__ticks_dc);
+  54:	89 ef       	ldi	r24, 0xF9	; 249
+  56:	90 e0       	ldi	r25, 0x00	; 0
+  58:	01 97       	sbiw	r24, 0x01	; 1
+  5a:	f1 f7       	brne	.-4      	; 0x58 <command_shift+0xa>
+  5c:	00 c0       	rjmp	.+0      	; 0x5e <command_shift+0x10>
+  5e:	00 00       	nop
+	_delay_ms(1);
+	PORTB &= ~(1<<en);
+  60:	c1 98       	cbi	0x18, 1	; 24
+  62:	08 95       	ret
+
+00000064 <command>:
+	command(0x0c);						//to hide cursor
+	//command(0x0e);						//to show cursor
+	//command(0x01);						//to clear LCD completely
+}
+void command(unsigned char a)
+{
+  64:	cf 93       	push	r28
+  66:	c8 2f       	mov	r28, r24
+	char z;
+	z=a & 0xf0;
+	command_shift(z);
+  68:	80 7f       	andi	r24, 0xF0	; 240
+  6a:	f1 df       	rcall	.-30     	; 0x4e <command_shift>
+	z=((a<<4) & 0xf0);
+	//z=a & 0xf0;
+	command_shift(z);
+  6c:	8c 2f       	mov	r24, r28
+  6e:	82 95       	swap	r24
+  70:	80 7f       	andi	r24, 0xF0	; 240
+  72:	ed df       	rcall	.-38     	; 0x4e <command_shift>
+}
+  74:	cf 91       	pop	r28
+  76:	08 95       	ret
+
+00000078 <lcd_init>:
+}
+
+// func declaration
+void lcd_init()							// to initialize LCD
+{
+	command(0x02);						//4bit LCD select
+  78:	82 e0       	ldi	r24, 0x02	; 2
+  7a:	f4 df       	rcall	.-24     	; 0x64 <command>
+	command(0x28);						//LCD init basic command(4bit LCD, 2 lines, 5X7
+  7c:	88 e2       	ldi	r24, 0x28	; 40
+  7e:	f2 df       	rcall	.-28     	; 0x64 <command>
+	command(0x06);						//LCD init basic command
+  80:	86 e0       	ldi	r24, 0x06	; 6
+  82:	f0 df       	rcall	.-32     	; 0x64 <command>
+	command(0x0c);						//to hide cursor
+  84:	8c e0       	ldi	r24, 0x0C	; 12
+  86:	ee df       	rcall	.-36     	; 0x64 <command>
+  88:	08 95       	ret
+
+0000008a <data_shift>:
+	PORTB &= ~(1<<en);
+	
+}
+void data_shift(unsigned char b)
+{
+	PORTB = b;
+  8a:	88 bb       	out	0x18, r24	; 24
+	PORTB |= (1<<rs);
+  8c:	c0 9a       	sbi	0x18, 0	; 24
+	PORTB |= (1<<en);
+  8e:	c1 9a       	sbi	0x18, 1	; 24
+  90:	89 ef       	ldi	r24, 0xF9	; 249
+  92:	90 e0       	ldi	r25, 0x00	; 0
+  94:	01 97       	sbiw	r24, 0x01	; 1
+  96:	f1 f7       	brne	.-4      	; 0x94 <data_shift+0xa>
+  98:	00 c0       	rjmp	.+0      	; 0x9a <data_shift+0x10>
+  9a:	00 00       	nop
+	_delay_ms(1);
+	PORTB &= ~(1<<en);
+  9c:	c1 98       	cbi	0x18, 1	; 24
+  9e:	08 95       	ret
+
+000000a0 <display>:
+	z=((a<<4) & 0xf0);
+	//z=a & 0xf0;
+	command_shift(z);
+}
+void display(unsigned char a)
+{
+  a0:	cf 93       	push	r28
+  a2:	c8 2f       	mov	r28, r24
+	char z;
+	z=a & 0xf0;
+	data_shift(z);
+  a4:	80 7f       	andi	r24, 0xF0	; 240
+  a6:	f1 df       	rcall	.-30     	; 0x8a <data_shift>
+	z=((a<<4) & 0xf0);
+	//z=a & 0xf0;
+	data_shift(z);
+  a8:	8c 2f       	mov	r24, r28
+  aa:	82 95       	swap	r24
+  ac:	80 7f       	andi	r24, 0xF0	; 240
+  ae:	ed df       	rcall	.-38     	; 0x8a <data_shift>
+}
+  b0:	cf 91       	pop	r28
+  b2:	08 95       	ret
+
+000000b4 <main>:
+void data_shift(unsigned char b);
+
+int main(void)
+{
+	
+	DDRB=0xff;		// initialize data port(D4 to D7 as o/p pins)... any change in the port will require change of port name in place of PORTB in command and data function defination as well
+  b4:	8f ef       	ldi	r24, 0xFF	; 255
+  b6:	87 bb       	out	0x17, r24	; 23
+	USART_Init(6);
+  b8:	86 e0       	ldi	r24, 0x06	; 6
+  ba:	90 e0       	ldi	r25, 0x00	; 0
+  bc:	bd df       	rcall	.-134    	; 0x38 <USART_Init>
+	lcd_init();
+  be:	dc df       	rcall	.-72     	; 0x78 <lcd_init>
+	while(1)
+	{
+		
+		unsigned char a=USART_Receive();
+  c0:	c2 df       	rcall	.-124    	; 0x46 <USART_Receive>
+		display(a);
+  c2:	ee df       	rcall	.-36     	; 0xa0 <display>
+  c4:	fd cf       	rjmp	.-6      	; 0xc0 <main+0xc>
+
+000000c6 <_exit>:
+  c6:	f8 94       	cli
+
+000000c8 <__stop_program>:
+  c8:	ff cf       	rjmp	.-2      	; 0xc8 <__stop_program>

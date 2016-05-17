@@ -1,0 +1,404 @@
+
+LCD motor(ROBOTIC DRIVE control).elf:     file format elf32-avr
+
+Sections:
+Idx Name          Size      VMA       LMA       File off  Algn
+  0 .text         0000015e  00000000  00000000  00000074  2**1
+                  CONTENTS, ALLOC, LOAD, READONLY, CODE
+  1 .data         00000022  00800060  0000015e  000001d2  2**0
+                  CONTENTS, ALLOC, LOAD, DATA
+  2 .comment      00000030  00000000  00000000  000001f4  2**0
+                  CONTENTS, READONLY
+  3 .debug_aranges 00000068  00000000  00000000  00000224  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  4 .debug_info   000004a8  00000000  00000000  0000028c  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  5 .debug_abbrev 000001a7  00000000  00000000  00000734  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  6 .debug_line   00000228  00000000  00000000  000008db  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  7 .debug_frame  000000d0  00000000  00000000  00000b04  2**2
+                  CONTENTS, READONLY, DEBUGGING
+  8 .debug_str    00000214  00000000  00000000  00000bd4  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  9 .debug_loc    00000264  00000000  00000000  00000de8  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 10 .debug_ranges 00000058  00000000  00000000  0000104c  2**0
+                  CONTENTS, READONLY, DEBUGGING
+
+Disassembly of section .text:
+
+00000000 <__vectors>:
+   0:	12 c0       	rjmp	.+36     	; 0x26 <__ctors_end>
+   2:	24 c0       	rjmp	.+72     	; 0x4c <__bad_interrupt>
+   4:	23 c0       	rjmp	.+70     	; 0x4c <__bad_interrupt>
+   6:	22 c0       	rjmp	.+68     	; 0x4c <__bad_interrupt>
+   8:	21 c0       	rjmp	.+66     	; 0x4c <__bad_interrupt>
+   a:	20 c0       	rjmp	.+64     	; 0x4c <__bad_interrupt>
+   c:	1f c0       	rjmp	.+62     	; 0x4c <__bad_interrupt>
+   e:	1e c0       	rjmp	.+60     	; 0x4c <__bad_interrupt>
+  10:	1d c0       	rjmp	.+58     	; 0x4c <__bad_interrupt>
+  12:	1c c0       	rjmp	.+56     	; 0x4c <__bad_interrupt>
+  14:	1b c0       	rjmp	.+54     	; 0x4c <__bad_interrupt>
+  16:	1a c0       	rjmp	.+52     	; 0x4c <__bad_interrupt>
+  18:	19 c0       	rjmp	.+50     	; 0x4c <__bad_interrupt>
+  1a:	18 c0       	rjmp	.+48     	; 0x4c <__bad_interrupt>
+  1c:	17 c0       	rjmp	.+46     	; 0x4c <__bad_interrupt>
+  1e:	16 c0       	rjmp	.+44     	; 0x4c <__bad_interrupt>
+  20:	15 c0       	rjmp	.+42     	; 0x4c <__bad_interrupt>
+  22:	14 c0       	rjmp	.+40     	; 0x4c <__bad_interrupt>
+  24:	13 c0       	rjmp	.+38     	; 0x4c <__bad_interrupt>
+
+00000026 <__ctors_end>:
+  26:	11 24       	eor	r1, r1
+  28:	1f be       	out	0x3f, r1	; 63
+  2a:	cf e5       	ldi	r28, 0x5F	; 95
+  2c:	d4 e0       	ldi	r29, 0x04	; 4
+  2e:	de bf       	out	0x3e, r29	; 62
+  30:	cd bf       	out	0x3d, r28	; 61
+
+00000032 <__do_copy_data>:
+  32:	10 e0       	ldi	r17, 0x00	; 0
+  34:	a0 e6       	ldi	r26, 0x60	; 96
+  36:	b0 e0       	ldi	r27, 0x00	; 0
+  38:	ee e5       	ldi	r30, 0x5E	; 94
+  3a:	f1 e0       	ldi	r31, 0x01	; 1
+  3c:	02 c0       	rjmp	.+4      	; 0x42 <__SREG__+0x3>
+  3e:	05 90       	lpm	r0, Z+
+  40:	0d 92       	st	X+, r0
+  42:	a2 38       	cpi	r26, 0x82	; 130
+  44:	b1 07       	cpc	r27, r17
+  46:	d9 f7       	brne	.-10     	; 0x3e <__SP_H__>
+  48:	4e d0       	rcall	.+156    	; 0xe6 <main>
+  4a:	87 c0       	rjmp	.+270    	; 0x15a <_exit>
+
+0000004c <__bad_interrupt>:
+  4c:	d9 cf       	rjmp	.-78     	; 0x0 <__vectors>
+
+0000004e <USART_Init>:
+// func declaration
+//USART init,transmitt, receiver
+void USART_Init( unsigned int ubrr)
+{
+	/* Set baud rate */
+	UBRRH = (unsigned char)(ubrr>>8);
+  4e:	90 bd       	out	0x20, r25	; 32
+	UBRRL = (unsigned char)ubrr;
+  50:	89 b9       	out	0x09, r24	; 9
+	/* Enable receiver and transmitter */
+	UCSRB = (1<<RXEN)|(1<<TXEN);
+  52:	88 e1       	ldi	r24, 0x18	; 24
+  54:	8a b9       	out	0x0a, r24	; 10
+	/* Set frame format: 8data, 2stop bit */
+	UCSRC = (1<<URSEL)|(1<<USBS)|(3<<UCSZ0);
+  56:	8e e8       	ldi	r24, 0x8E	; 142
+  58:	80 bd       	out	0x20, r24	; 32
+  5a:	08 95       	ret
+
+0000005c <USART_Receive>:
+	UDR = data;
+}
+unsigned char USART_Receive( void )
+{
+	/* Wait for data to be received */
+	while ( !(UCSRA & (1<<RXC)) )
+  5c:	5f 9b       	sbis	0x0b, 7	; 11
+  5e:	fe cf       	rjmp	.-4      	; 0x5c <USART_Receive>
+	;
+	/* Get and return received data from buffer */
+	return UDR;
+  60:	8c b1       	in	r24, 0x0c	; 12
+}
+  62:	08 95       	ret
+
+00000064 <command_shift>:
+	//z=a & 0xf0;
+	display_shift(z);
+}
+void command_shift(unsigned char b)					// to give command to LCD like which position we want to show display
+{
+	PORTB = b;
+  64:	88 bb       	out	0x18, r24	; 24
+	PORTB &= ~(1<<rs);
+  66:	c0 98       	cbi	0x18, 0	; 24
+	PORTB |= (1<<en);
+  68:	c1 9a       	sbi	0x18, 1	; 24
+	#else
+		//round up by default
+		__ticks_dc = (uint32_t)(ceil(fabs(__tmp)));
+	#endif
+
+	__builtin_avr_delay_cycles(__ticks_dc);
+  6a:	89 ef       	ldi	r24, 0xF9	; 249
+  6c:	90 e0       	ldi	r25, 0x00	; 0
+  6e:	01 97       	sbiw	r24, 0x01	; 1
+  70:	f1 f7       	brne	.-4      	; 0x6e <command_shift+0xa>
+  72:	00 c0       	rjmp	.+0      	; 0x74 <command_shift+0x10>
+  74:	00 00       	nop
+	_delay_ms(1);
+	PORTB &= ~(1<<en);
+  76:	c1 98       	cbi	0x18, 1	; 24
+  78:	08 95       	ret
+
+0000007a <command>:
+	command(0x0c);						//to hide cursor
+	//command(0x0e);						//to show cursor
+	//command(0x01);						//to clear LCD completely
+}
+void command(unsigned char a)
+{
+  7a:	cf 93       	push	r28
+  7c:	c8 2f       	mov	r28, r24
+	char z;
+	z=a & 0xf0;
+	command_shift(z);
+  7e:	80 7f       	andi	r24, 0xF0	; 240
+  80:	f1 df       	rcall	.-30     	; 0x64 <command_shift>
+	z=((a<<4) & 0xf0);
+	//z=a & 0xf0;
+	command_shift(z);
+  82:	8c 2f       	mov	r24, r28
+  84:	82 95       	swap	r24
+  86:	80 7f       	andi	r24, 0xF0	; 240
+  88:	ed df       	rcall	.-38     	; 0x64 <command_shift>
+}
+  8a:	cf 91       	pop	r28
+  8c:	08 95       	ret
+
+0000008e <lcd_init>:
+}
+
+// func declaration
+void lcd_init()							// to initialize LCD
+{
+	command(0x02);						//4bit LCD select
+  8e:	82 e0       	ldi	r24, 0x02	; 2
+  90:	f4 df       	rcall	.-24     	; 0x7a <command>
+	command(0x28);						//LCD init basic command(4bit LCD, 2 lines, 5X7
+  92:	88 e2       	ldi	r24, 0x28	; 40
+  94:	f2 df       	rcall	.-28     	; 0x7a <command>
+	command(0x06);						//LCD init basic command
+  96:	86 e0       	ldi	r24, 0x06	; 6
+  98:	f0 df       	rcall	.-32     	; 0x7a <command>
+	command(0x0c);						//to hide cursor
+  9a:	8c e0       	ldi	r24, 0x0C	; 12
+  9c:	ee df       	rcall	.-36     	; 0x7a <command>
+  9e:	08 95       	ret
+
+000000a0 <display_shift>:
+	PORTB &= ~(1<<en);
+	
+}
+void display_shift(unsigned char b)
+{
+	PORTB = b;
+  a0:	88 bb       	out	0x18, r24	; 24
+	PORTB |= (1<<rs);
+  a2:	c0 9a       	sbi	0x18, 0	; 24
+	PORTB |= (1<<en);
+  a4:	c1 9a       	sbi	0x18, 1	; 24
+  a6:	89 ef       	ldi	r24, 0xF9	; 249
+  a8:	90 e0       	ldi	r25, 0x00	; 0
+  aa:	01 97       	sbiw	r24, 0x01	; 1
+  ac:	f1 f7       	brne	.-4      	; 0xaa <display_shift+0xa>
+  ae:	00 c0       	rjmp	.+0      	; 0xb0 <display_shift+0x10>
+  b0:	00 00       	nop
+	_delay_ms(1);
+	PORTB &= ~(1<<en);
+  b2:	c1 98       	cbi	0x18, 1	; 24
+  b4:	08 95       	ret
+
+000000b6 <display>:
+	z=((a<<4) & 0xf0);
+	//z=a & 0xf0;
+	command_shift(z);
+}
+void display(unsigned char a)
+{
+  b6:	cf 93       	push	r28
+  b8:	c8 2f       	mov	r28, r24
+	char z;
+	z=a & 0xf0;
+	display_shift(z);
+  ba:	80 7f       	andi	r24, 0xF0	; 240
+  bc:	f1 df       	rcall	.-30     	; 0xa0 <display_shift>
+	z=((a<<4) & 0xf0);
+	//z=a & 0xf0;
+	display_shift(z);
+  be:	8c 2f       	mov	r24, r28
+  c0:	82 95       	swap	r24
+  c2:	80 7f       	andi	r24, 0xF0	; 240
+  c4:	ed df       	rcall	.-38     	; 0xa0 <display_shift>
+}
+  c6:	cf 91       	pop	r28
+  c8:	08 95       	ret
+
+000000ca <string>:
+	_delay_ms(1);
+	PORTB &= ~(1<<en);
+	
+}
+void string( char *p)
+{
+  ca:	cf 93       	push	r28
+  cc:	df 93       	push	r29
+  ce:	ec 01       	movw	r28, r24
+	
+	while(*p!= '\0')
+  d0:	88 81       	ld	r24, Y
+  d2:	88 23       	and	r24, r24
+  d4:	29 f0       	breq	.+10     	; 0xe0 <string+0x16>
+  d6:	21 96       	adiw	r28, 0x01	; 1
+	{
+		display(*p);
+  d8:	ee df       	rcall	.-36     	; 0xb6 <display>
+	
+}
+void string( char *p)
+{
+	
+	while(*p!= '\0')
+  da:	89 91       	ld	r24, Y+
+  dc:	81 11       	cpse	r24, r1
+  de:	fc cf       	rjmp	.-8      	; 0xd8 <string+0xe>
+	{
+		display(*p);
+		p++;
+	}
+  e0:	df 91       	pop	r29
+  e2:	cf 91       	pop	r28
+  e4:	08 95       	ret
+
+000000e6 <main>:
+void string( char *p);
+
+int main(void)
+{
+	
+	DDRB=0xff;		// initialize data port(B4 to B7 as o/p pins)... any change in the port will require change of port name in place of PORTB in command and data function defination as well
+  e6:	8f ef       	ldi	r24, 0xFF	; 255
+  e8:	87 bb       	out	0x17, r24	; 23
+	DDRC=0x0f;
+  ea:	8f e0       	ldi	r24, 0x0F	; 15
+  ec:	84 bb       	out	0x14, r24	; 20
+	USART_Init(6);
+  ee:	86 e0       	ldi	r24, 0x06	; 6
+  f0:	90 e0       	ldi	r25, 0x00	; 0
+  f2:	ad df       	rcall	.-166    	; 0x4e <USART_Init>
+	lcd_init();
+  f4:	cc df       	rcall	.-104    	; 0x8e <lcd_init>
+		}
+		else if(a=='D')
+		{
+			command(0x01);
+			string("RIGHT");
+			PORTC=0x09;
+  f6:	09 e0       	ldi	r16, 0x09	; 9
+		}
+		else if(a=='C')
+		{
+			command(0x01);
+			string("LEFT");
+			PORTC=0x06;
+  f8:	16 e0       	ldi	r17, 0x06	; 6
+		}
+		else if(a=='B')
+		{
+			command(0x01);
+			string("REVERSE");
+			PORTC=0x0a;
+  fa:	da e0       	ldi	r29, 0x0A	; 10
+		unsigned char a=USART_Receive();
+		if(a=='A')
+		{
+			command(0x01);
+			string("FORWARD");
+			PORTC=0x05;
+  fc:	c5 e0       	ldi	r28, 0x05	; 5
+	lcd_init();
+	while(1)
+	{
+		
+		
+		unsigned char a=USART_Receive();
+  fe:	ae df       	rcall	.-164    	; 0x5c <USART_Receive>
+		if(a=='A')
+ 100:	81 34       	cpi	r24, 0x41	; 65
+ 102:	39 f4       	brne	.+14     	; 0x112 <main+0x2c>
+		{
+			command(0x01);
+ 104:	81 e0       	ldi	r24, 0x01	; 1
+ 106:	b9 df       	rcall	.-142    	; 0x7a <command>
+			string("FORWARD");
+ 108:	80 e6       	ldi	r24, 0x60	; 96
+ 10a:	90 e0       	ldi	r25, 0x00	; 0
+ 10c:	de df       	rcall	.-68     	; 0xca <string>
+			PORTC=0x05;
+ 10e:	c5 bb       	out	0x15, r28	; 21
+ 110:	f6 cf       	rjmp	.-20     	; 0xfe <main+0x18>
+		}
+		else if(a=='B')
+ 112:	82 34       	cpi	r24, 0x42	; 66
+ 114:	39 f4       	brne	.+14     	; 0x124 <main+0x3e>
+		{
+			command(0x01);
+ 116:	81 e0       	ldi	r24, 0x01	; 1
+ 118:	b0 df       	rcall	.-160    	; 0x7a <command>
+			string("REVERSE");
+ 11a:	88 e6       	ldi	r24, 0x68	; 104
+ 11c:	90 e0       	ldi	r25, 0x00	; 0
+ 11e:	d5 df       	rcall	.-86     	; 0xca <string>
+			PORTC=0x0a;
+ 120:	d5 bb       	out	0x15, r29	; 21
+ 122:	ed cf       	rjmp	.-38     	; 0xfe <main+0x18>
+		}
+		else if(a=='C')
+ 124:	83 34       	cpi	r24, 0x43	; 67
+ 126:	39 f4       	brne	.+14     	; 0x136 <main+0x50>
+		{
+			command(0x01);
+ 128:	81 e0       	ldi	r24, 0x01	; 1
+ 12a:	a7 df       	rcall	.-178    	; 0x7a <command>
+			string("LEFT");
+ 12c:	80 e7       	ldi	r24, 0x70	; 112
+ 12e:	90 e0       	ldi	r25, 0x00	; 0
+ 130:	cc df       	rcall	.-104    	; 0xca <string>
+			PORTC=0x06;
+ 132:	15 bb       	out	0x15, r17	; 21
+ 134:	e4 cf       	rjmp	.-56     	; 0xfe <main+0x18>
+		}
+		else if(a=='D')
+ 136:	84 34       	cpi	r24, 0x44	; 68
+ 138:	39 f4       	brne	.+14     	; 0x148 <main+0x62>
+		{
+			command(0x01);
+ 13a:	81 e0       	ldi	r24, 0x01	; 1
+ 13c:	9e df       	rcall	.-196    	; 0x7a <command>
+			string("RIGHT");
+ 13e:	85 e7       	ldi	r24, 0x75	; 117
+ 140:	90 e0       	ldi	r25, 0x00	; 0
+ 142:	c3 df       	rcall	.-122    	; 0xca <string>
+			PORTC=0x09;
+ 144:	05 bb       	out	0x15, r16	; 21
+ 146:	db cf       	rjmp	.-74     	; 0xfe <main+0x18>
+		}
+		else if(a=='E')
+ 148:	85 34       	cpi	r24, 0x45	; 69
+ 14a:	c9 f6       	brne	.-78     	; 0xfe <main+0x18>
+		{
+			command(0x01);
+ 14c:	81 e0       	ldi	r24, 0x01	; 1
+ 14e:	95 df       	rcall	.-214    	; 0x7a <command>
+			string("STOP!");
+ 150:	8b e7       	ldi	r24, 0x7B	; 123
+ 152:	90 e0       	ldi	r25, 0x00	; 0
+ 154:	ba df       	rcall	.-140    	; 0xca <string>
+			PORTC=0x00;
+ 156:	15 ba       	out	0x15, r1	; 21
+ 158:	d2 cf       	rjmp	.-92     	; 0xfe <main+0x18>
+
+0000015a <_exit>:
+ 15a:	f8 94       	cli
+
+0000015c <__stop_program>:
+ 15c:	ff cf       	rjmp	.-2      	; 0x15c <__stop_program>

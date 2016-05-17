@@ -1,0 +1,748 @@
+
+rise_fal_baud.elf:     file format elf32-avr
+
+Sections:
+Idx Name          Size      VMA       LMA       File off  Algn
+  0 .text         0000040a  00000000  00000000  00000074  2**1
+                  CONTENTS, ALLOC, LOAD, READONLY, CODE
+  1 .data         0000002c  00800060  0000040a  0000047e  2**0
+                  CONTENTS, ALLOC, LOAD, DATA
+  2 .comment      00000030  00000000  00000000  000004aa  2**0
+                  CONTENTS, READONLY
+  3 .debug_aranges 00000038  00000000  00000000  000004da  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  4 .debug_info   0000039e  00000000  00000000  00000512  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  5 .debug_abbrev 00000119  00000000  00000000  000008b0  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  6 .debug_line   00000151  00000000  00000000  000009c9  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  7 .debug_frame  00000070  00000000  00000000  00000b1c  2**2
+                  CONTENTS, READONLY, DEBUGGING
+  8 .debug_str    00000174  00000000  00000000  00000b8c  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  9 .debug_loc    00000790  00000000  00000000  00000d00  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 10 .debug_ranges 00000028  00000000  00000000  00001490  2**0
+                  CONTENTS, READONLY, DEBUGGING
+
+Disassembly of section .text:
+
+00000000 <__vectors>:
+   0:	12 c0       	rjmp	.+36     	; 0x26 <__ctors_end>
+   2:	24 c0       	rjmp	.+72     	; 0x4c <__bad_interrupt>
+   4:	23 c0       	rjmp	.+70     	; 0x4c <__bad_interrupt>
+   6:	22 c0       	rjmp	.+68     	; 0x4c <__bad_interrupt>
+   8:	21 c0       	rjmp	.+66     	; 0x4c <__bad_interrupt>
+   a:	20 c0       	rjmp	.+64     	; 0x4c <__bad_interrupt>
+   c:	1f c0       	rjmp	.+62     	; 0x4c <__bad_interrupt>
+   e:	1e c0       	rjmp	.+60     	; 0x4c <__bad_interrupt>
+  10:	1d c0       	rjmp	.+58     	; 0x4c <__bad_interrupt>
+  12:	1c c0       	rjmp	.+56     	; 0x4c <__bad_interrupt>
+  14:	1b c0       	rjmp	.+54     	; 0x4c <__bad_interrupt>
+  16:	1a c0       	rjmp	.+52     	; 0x4c <__bad_interrupt>
+  18:	19 c0       	rjmp	.+50     	; 0x4c <__bad_interrupt>
+  1a:	18 c0       	rjmp	.+48     	; 0x4c <__bad_interrupt>
+  1c:	17 c0       	rjmp	.+46     	; 0x4c <__bad_interrupt>
+  1e:	16 c0       	rjmp	.+44     	; 0x4c <__bad_interrupt>
+  20:	15 c0       	rjmp	.+42     	; 0x4c <__bad_interrupt>
+  22:	14 c0       	rjmp	.+40     	; 0x4c <__bad_interrupt>
+  24:	13 c0       	rjmp	.+38     	; 0x4c <__bad_interrupt>
+
+00000026 <__ctors_end>:
+  26:	11 24       	eor	r1, r1
+  28:	1f be       	out	0x3f, r1	; 63
+  2a:	cf e5       	ldi	r28, 0x5F	; 95
+  2c:	d4 e0       	ldi	r29, 0x04	; 4
+  2e:	de bf       	out	0x3e, r29	; 62
+  30:	cd bf       	out	0x3d, r28	; 61
+
+00000032 <__do_copy_data>:
+  32:	10 e0       	ldi	r17, 0x00	; 0
+  34:	a0 e6       	ldi	r26, 0x60	; 96
+  36:	b0 e0       	ldi	r27, 0x00	; 0
+  38:	ea e0       	ldi	r30, 0x0A	; 10
+  3a:	f4 e0       	ldi	r31, 0x04	; 4
+  3c:	02 c0       	rjmp	.+4      	; 0x42 <__SREG__+0x3>
+  3e:	05 90       	lpm	r0, Z+
+  40:	0d 92       	st	X+, r0
+  42:	ac 38       	cpi	r26, 0x8C	; 140
+  44:	b1 07       	cpc	r27, r17
+  46:	d9 f7       	brne	.-10     	; 0x3e <__SP_H__>
+  48:	1b d0       	rcall	.+54     	; 0x80 <main>
+  4a:	dd c1       	rjmp	.+954    	; 0x406 <_exit>
+
+0000004c <__bad_interrupt>:
+  4c:	d9 cf       	rjmp	.-78     	; 0x0 <__vectors>
+
+0000004e <USART_Init>:
+// func declaration
+//USART init,transmitt, receiver
+void USART_Init( unsigned int ubrr)
+{
+	/* Set duty rate */
+	UBRRH = (unsigned char)(ubrr>>8);
+  4e:	90 bd       	out	0x20, r25	; 32
+	UBRRL = (unsigned char)ubrr;
+  50:	89 b9       	out	0x09, r24	; 9
+	/* Enable receiver and transmitter */
+	UCSRB = (1<<RXEN)|(1<<TXEN);
+  52:	88 e1       	ldi	r24, 0x18	; 24
+  54:	8a b9       	out	0x0a, r24	; 10
+	/* Set frame format: 8data, 2stop bit */
+	UCSRC = (1<<URSEL)|(1<<USBS)|(3<<UCSZ0);
+  56:	8e e8       	ldi	r24, 0x8E	; 142
+  58:	80 bd       	out	0x20, r24	; 32
+  5a:	08 95       	ret
+
+0000005c <USART_Transmit>:
+}
+void USART_Transmit( unsigned char data )
+{
+	/* Wait for empty transmit buffer */
+	while ( !( UCSRA & (1<<UDRE)) )
+  5c:	5d 9b       	sbis	0x0b, 5	; 11
+  5e:	fe cf       	rjmp	.-4      	; 0x5c <USART_Transmit>
+	;
+	/* Put data into buffer, sends the data */
+	UDR = data;
+  60:	8c b9       	out	0x0c, r24	; 12
+  62:	08 95       	ret
+
+00000064 <transmit_str>:
+}
+void transmit_str(char *p)
+{
+  64:	cf 93       	push	r28
+  66:	df 93       	push	r29
+  68:	ec 01       	movw	r28, r24
+	while(*p!= '\0')
+  6a:	88 81       	ld	r24, Y
+  6c:	88 23       	and	r24, r24
+  6e:	29 f0       	breq	.+10     	; 0x7a <transmit_str+0x16>
+  70:	21 96       	adiw	r28, 0x01	; 1
+	{
+		USART_Transmit(*p);
+  72:	f4 df       	rcall	.-24     	; 0x5c <USART_Transmit>
+	/* Put data into buffer, sends the data */
+	UDR = data;
+}
+void transmit_str(char *p)
+{
+	while(*p!= '\0')
+  74:	89 91       	ld	r24, Y+
+  76:	81 11       	cpse	r24, r1
+  78:	fc cf       	rjmp	.-8      	; 0x72 <transmit_str+0xe>
+	{
+		USART_Transmit(*p);
+		p++;
+	}
+  7a:	df 91       	pop	r29
+  7c:	cf 91       	pop	r28
+  7e:	08 95       	ret
+
+00000080 <main>:
+void USART_Transmit(unsigned char data);
+void transmit_str(char *p);
+
+
+int main(void)
+{
+  80:	cf 93       	push	r28
+  82:	df 93       	push	r29
+  84:	cd b7       	in	r28, 0x3d	; 61
+  86:	de b7       	in	r29, 0x3e	; 62
+  88:	2c 97       	sbiw	r28, 0x0c	; 12
+  8a:	0f b6       	in	r0, 0x3f	; 63
+  8c:	f8 94       	cli
+  8e:	de bf       	out	0x3e, r29	; 62
+  90:	0f be       	out	0x3f, r0	; 63
+  92:	cd bf       	out	0x3d, r28	; 61
+	DDRB=0x00;
+  94:	17 ba       	out	0x17, r1	; 23
+	USART_Init(51);
+  96:	83 e3       	ldi	r24, 0x33	; 51
+  98:	90 e0       	ldi	r25, 0x00	; 0
+  9a:	d9 df       	rcall	.-78     	; 0x4e <USART_Init>
+	TCCR1B=0x04;				// setting falling edge trigger(bit 6) and pre-scaler to 256
+  9c:	84 e0       	ldi	r24, 0x04	; 4
+  9e:	8e bd       	out	0x2e, r24	; 46
+		rise=b-a;
+		fal=c-b;
+		
+		duty=(rise*100)/tot;
+		transmit_str("duty rate:");
+		x=(duty/10)+48;
+  a0:	0f 2e       	mov	r0, r31
+  a2:	fa e0       	ldi	r31, 0x0A	; 10
+  a4:	4f 2e       	mov	r4, r31
+  a6:	51 2c       	mov	r5, r1
+  a8:	61 2c       	mov	r6, r1
+  aa:	71 2c       	mov	r7, r1
+  ac:	f0 2d       	mov	r31, r0
+	
+	long int a,b,c,x,duty,rise,fal,tot;	
+    
+	while(1)
+    {
+		TCNT1=0;	
+  ae:	1d bc       	out	0x2d, r1	; 45
+  b0:	1c bc       	out	0x2c, r1	; 44
+	// this detects the first falling edge
+		while(!(TIFR&(1<<ICF1)));
+  b2:	08 b6       	in	r0, 0x38	; 56
+  b4:	05 fe       	sbrs	r0, 5
+  b6:	fd cf       	rjmp	.-6      	; 0xb2 <main+0x32>
+		TCCR1B|=0x40;							// setting rising edge triggering
+  b8:	8e b5       	in	r24, 0x2e	; 46
+  ba:	80 64       	ori	r24, 0x40	; 64
+  bc:	8e bd       	out	0x2e, r24	; 46
+		TIFR|=(1<<ICF1);						// reseting input capture flag
+  be:	88 b7       	in	r24, 0x38	; 56
+  c0:	80 62       	ori	r24, 0x20	; 32
+  c2:	88 bf       	out	0x38, r24	; 56
+	// here we detecting rising edge
+        while(!(TIFR&(1<<ICF1)));
+  c4:	08 b6       	in	r0, 0x38	; 56
+  c6:	05 fe       	sbrs	r0, 5
+  c8:	fd cf       	rjmp	.-6      	; 0xc4 <main+0x44>
+		TIFR|=(1<<ICF1);						// reseting input capture flag
+  ca:	88 b7       	in	r24, 0x38	; 56
+  cc:	80 62       	ori	r24, 0x20	; 32
+  ce:	88 bf       	out	0x38, r24	; 56
+		TCCR1B&=0x0f;							// setting falling edge triggering
+  d0:	8e b5       	in	r24, 0x2e	; 46
+  d2:	8f 70       	andi	r24, 0x0F	; 15
+  d4:	8e bd       	out	0x2e, r24	; 46
+		a=ICR1;									// saving value of ICR1(TCNT1 stored at edge trigger) in variable
+  d6:	86 b5       	in	r24, 0x26	; 38
+  d8:	97 b5       	in	r25, 0x27	; 39
+  da:	4c 01       	movw	r8, r24
+  dc:	a1 2c       	mov	r10, r1
+  de:	b1 2c       	mov	r11, r1
+  e0:	89 82       	std	Y+1, r8	; 0x01
+  e2:	9a 82       	std	Y+2, r9	; 0x02
+  e4:	ab 82       	std	Y+3, r10	; 0x03
+  e6:	bc 82       	std	Y+4, r11	; 0x04
+	// here we detecting falling edge
+		while(!(TIFR&(1<<ICF1)));
+  e8:	08 b6       	in	r0, 0x38	; 56
+  ea:	05 fe       	sbrs	r0, 5
+  ec:	fd cf       	rjmp	.-6      	; 0xe8 <main+0x68>
+		TIFR|=(1<<ICF1);						// reseting input capture flag
+  ee:	88 b7       	in	r24, 0x38	; 56
+  f0:	80 62       	ori	r24, 0x20	; 32
+  f2:	88 bf       	out	0x38, r24	; 56
+		TCCR1B|=0x40;							// setting rising edge triggering
+  f4:	8e b5       	in	r24, 0x2e	; 46
+  f6:	80 64       	ori	r24, 0x40	; 64
+  f8:	8e bd       	out	0x2e, r24	; 46
+		b=ICR1;
+  fa:	86 b5       	in	r24, 0x26	; 38
+  fc:	97 b5       	in	r25, 0x27	; 39
+  fe:	a0 e0       	ldi	r26, 0x00	; 0
+ 100:	b0 e0       	ldi	r27, 0x00	; 0
+	// here we detecting rising edge
+		while(!(TIFR&(1<<ICF1)));
+ 102:	08 b6       	in	r0, 0x38	; 56
+ 104:	05 fe       	sbrs	r0, 5
+ 106:	fd cf       	rjmp	.-6      	; 0x102 <main+0x82>
+		TIFR|=(1<<ICF1);						// reseting input capture flag
+ 108:	28 b7       	in	r18, 0x38	; 56
+ 10a:	20 62       	ori	r18, 0x20	; 32
+ 10c:	28 bf       	out	0x38, r18	; 56
+		TCCR1B&=0x0f;							// setting falling edge triggering
+ 10e:	2e b5       	in	r18, 0x2e	; 46
+ 110:	2f 70       	andi	r18, 0x0F	; 15
+ 112:	2e bd       	out	0x2e, r18	; 46
+		c=ICR1;
+ 114:	86 b4       	in	r8, 0x26	; 38
+ 116:	97 b4       	in	r9, 0x27	; 39
+ 118:	94 01       	movw	r18, r8
+ 11a:	40 e0       	ldi	r20, 0x00	; 0
+ 11c:	50 e0       	ldi	r21, 0x00	; 0
+ 11e:	29 87       	std	Y+9, r18	; 0x09
+ 120:	3a 87       	std	Y+10, r19	; 0x0a
+ 122:	4b 87       	std	Y+11, r20	; 0x0b
+ 124:	5c 87       	std	Y+12, r21	; 0x0c
+		
+	// we are using rising falling rising format with variables as a b c respectively	
+		tot=c-a;
+		rise=b-a;
+ 126:	6c 01       	movw	r12, r24
+ 128:	7d 01       	movw	r14, r26
+ 12a:	89 80       	ldd	r8, Y+1	; 0x01
+ 12c:	9a 80       	ldd	r9, Y+2	; 0x02
+ 12e:	ab 80       	ldd	r10, Y+3	; 0x03
+ 130:	bc 80       	ldd	r11, Y+4	; 0x04
+ 132:	c8 18       	sub	r12, r8
+ 134:	d9 08       	sbc	r13, r9
+ 136:	ea 08       	sbc	r14, r10
+ 138:	fb 08       	sbc	r15, r11
+		fal=c-b;
+ 13a:	28 1b       	sub	r18, r24
+ 13c:	39 0b       	sbc	r19, r25
+ 13e:	4a 0b       	sbc	r20, r26
+ 140:	5b 0b       	sbc	r21, r27
+ 142:	2d 83       	std	Y+5, r18	; 0x05
+ 144:	3e 83       	std	Y+6, r19	; 0x06
+ 146:	4f 83       	std	Y+7, r20	; 0x07
+ 148:	58 87       	std	Y+8, r21	; 0x08
+		
+		duty=(rise*100)/tot;
+ 14a:	a4 e6       	ldi	r26, 0x64	; 100
+ 14c:	b0 e0       	ldi	r27, 0x00	; 0
+ 14e:	a7 01       	movw	r20, r14
+ 150:	96 01       	movw	r18, r12
+ 152:	21 d1       	rcall	.+578    	; 0x396 <__muluhisi3>
+		TIFR|=(1<<ICF1);						// reseting input capture flag
+		TCCR1B&=0x0f;							// setting falling edge triggering
+		c=ICR1;
+		
+	// we are using rising falling rising format with variables as a b c respectively	
+		tot=c-a;
+ 154:	29 85       	ldd	r18, Y+9	; 0x09
+ 156:	3a 85       	ldd	r19, Y+10	; 0x0a
+ 158:	4b 85       	ldd	r20, Y+11	; 0x0b
+ 15a:	5c 85       	ldd	r21, Y+12	; 0x0c
+ 15c:	28 19       	sub	r18, r8
+ 15e:	39 09       	sbc	r19, r9
+ 160:	4a 09       	sbc	r20, r10
+ 162:	5b 09       	sbc	r21, r11
+		rise=b-a;
+		fal=c-b;
+		
+		duty=(rise*100)/tot;
+ 164:	fc d0       	rcall	.+504    	; 0x35e <__divmodsi4>
+ 166:	49 01       	movw	r8, r18
+ 168:	5a 01       	movw	r10, r20
+		transmit_str("duty rate:");
+ 16a:	80 e6       	ldi	r24, 0x60	; 96
+ 16c:	90 e0       	ldi	r25, 0x00	; 0
+ 16e:	7a df       	rcall	.-268    	; 0x64 <transmit_str>
+		x=(duty/10)+48;
+ 170:	c5 01       	movw	r24, r10
+ 172:	b4 01       	movw	r22, r8
+ 174:	a3 01       	movw	r20, r6
+ 176:	92 01       	movw	r18, r4
+ 178:	f2 d0       	rcall	.+484    	; 0x35e <__divmodsi4>
+ 17a:	16 2f       	mov	r17, r22
+		USART_Transmit(x);
+ 17c:	80 e3       	ldi	r24, 0x30	; 48
+ 17e:	82 0f       	add	r24, r18
+ 180:	6d df       	rcall	.-294    	; 0x5c <USART_Transmit>
+		x=(duty%10)+48;
+		USART_Transmit(x);
+ 182:	80 e3       	ldi	r24, 0x30	; 48
+ 184:	81 0f       	add	r24, r17
+ 186:	6a df       	rcall	.-300    	; 0x5c <USART_Transmit>
+		USART_Transmit('%');
+ 188:	85 e2       	ldi	r24, 0x25	; 37
+ 18a:	68 df       	rcall	.-304    	; 0x5c <USART_Transmit>
+		USART_Transmit(' ');
+ 18c:	80 e2       	ldi	r24, 0x20	; 32
+ 18e:	66 df       	rcall	.-308    	; 0x5c <USART_Transmit>
+		USART_Transmit(' ');
+ 190:	80 e2       	ldi	r24, 0x20	; 32
+ 192:	64 df       	rcall	.-312    	; 0x5c <USART_Transmit>
+		
+		rise=rise*32000;
+ 194:	a0 e0       	ldi	r26, 0x00	; 0
+ 196:	bd e7       	ldi	r27, 0x7D	; 125
+ 198:	a7 01       	movw	r20, r14
+ 19a:	96 01       	movw	r18, r12
+ 19c:	fc d0       	rcall	.+504    	; 0x396 <__muluhisi3>
+ 19e:	6b 01       	movw	r12, r22
+ 1a0:	7c 01       	movw	r14, r24
+		transmit_str("Rise time: 0.");
+ 1a2:	8b e6       	ldi	r24, 0x6B	; 107
+ 1a4:	90 e0       	ldi	r25, 0x00	; 0
+ 1a6:	5e df       	rcall	.-324    	; 0x64 <transmit_str>
+		x=(rise/100000000)+48;
+ 1a8:	c7 01       	movw	r24, r14
+ 1aa:	b6 01       	movw	r22, r12
+ 1ac:	20 e0       	ldi	r18, 0x00	; 0
+ 1ae:	31 ee       	ldi	r19, 0xE1	; 225
+ 1b0:	45 ef       	ldi	r20, 0xF5	; 245
+ 1b2:	55 e0       	ldi	r21, 0x05	; 5
+ 1b4:	d4 d0       	rcall	.+424    	; 0x35e <__divmodsi4>
+ 1b6:	6b 01       	movw	r12, r22
+ 1b8:	7c 01       	movw	r14, r24
+		USART_Transmit(x);
+ 1ba:	80 e3       	ldi	r24, 0x30	; 48
+ 1bc:	82 0f       	add	r24, r18
+ 1be:	4e df       	rcall	.-356    	; 0x5c <USART_Transmit>
+		rise=rise%100000000;
+		x=(rise/10000000)+48;
+ 1c0:	c7 01       	movw	r24, r14
+ 1c2:	b6 01       	movw	r22, r12
+ 1c4:	20 e8       	ldi	r18, 0x80	; 128
+ 1c6:	36 e9       	ldi	r19, 0x96	; 150
+ 1c8:	48 e9       	ldi	r20, 0x98	; 152
+ 1ca:	50 e0       	ldi	r21, 0x00	; 0
+ 1cc:	c8 d0       	rcall	.+400    	; 0x35e <__divmodsi4>
+ 1ce:	6b 01       	movw	r12, r22
+ 1d0:	7c 01       	movw	r14, r24
+		USART_Transmit(x);
+ 1d2:	80 e3       	ldi	r24, 0x30	; 48
+ 1d4:	82 0f       	add	r24, r18
+ 1d6:	42 df       	rcall	.-380    	; 0x5c <USART_Transmit>
+		rise=rise%10000000;
+		x=(rise/1000000)+48;
+ 1d8:	c7 01       	movw	r24, r14
+ 1da:	b6 01       	movw	r22, r12
+ 1dc:	20 e4       	ldi	r18, 0x40	; 64
+ 1de:	32 e4       	ldi	r19, 0x42	; 66
+ 1e0:	4f e0       	ldi	r20, 0x0F	; 15
+ 1e2:	50 e0       	ldi	r21, 0x00	; 0
+ 1e4:	bc d0       	rcall	.+376    	; 0x35e <__divmodsi4>
+ 1e6:	6b 01       	movw	r12, r22
+ 1e8:	7c 01       	movw	r14, r24
+		USART_Transmit(x);
+ 1ea:	80 e3       	ldi	r24, 0x30	; 48
+ 1ec:	82 0f       	add	r24, r18
+ 1ee:	36 df       	rcall	.-404    	; 0x5c <USART_Transmit>
+		rise=rise%1000000;
+		x=(rise/100000)+48;
+ 1f0:	c7 01       	movw	r24, r14
+ 1f2:	b6 01       	movw	r22, r12
+ 1f4:	20 ea       	ldi	r18, 0xA0	; 160
+ 1f6:	36 e8       	ldi	r19, 0x86	; 134
+ 1f8:	41 e0       	ldi	r20, 0x01	; 1
+ 1fa:	50 e0       	ldi	r21, 0x00	; 0
+ 1fc:	b0 d0       	rcall	.+352    	; 0x35e <__divmodsi4>
+ 1fe:	6b 01       	movw	r12, r22
+ 200:	7c 01       	movw	r14, r24
+		USART_Transmit(x);
+ 202:	80 e3       	ldi	r24, 0x30	; 48
+ 204:	82 0f       	add	r24, r18
+ 206:	2a df       	rcall	.-428    	; 0x5c <USART_Transmit>
+		rise=rise%100000;
+		x=(rise/10000)+48;
+ 208:	c7 01       	movw	r24, r14
+ 20a:	b6 01       	movw	r22, r12
+ 20c:	20 e1       	ldi	r18, 0x10	; 16
+ 20e:	37 e2       	ldi	r19, 0x27	; 39
+ 210:	40 e0       	ldi	r20, 0x00	; 0
+ 212:	50 e0       	ldi	r21, 0x00	; 0
+ 214:	a4 d0       	rcall	.+328    	; 0x35e <__divmodsi4>
+ 216:	6b 01       	movw	r12, r22
+ 218:	7c 01       	movw	r14, r24
+		USART_Transmit(x);
+ 21a:	80 e3       	ldi	r24, 0x30	; 48
+ 21c:	82 0f       	add	r24, r18
+ 21e:	1e df       	rcall	.-452    	; 0x5c <USART_Transmit>
+		rise=rise%10000;
+		x=(rise/1000)+48;
+ 220:	c7 01       	movw	r24, r14
+ 222:	b6 01       	movw	r22, r12
+ 224:	28 ee       	ldi	r18, 0xE8	; 232
+ 226:	33 e0       	ldi	r19, 0x03	; 3
+ 228:	40 e0       	ldi	r20, 0x00	; 0
+ 22a:	50 e0       	ldi	r21, 0x00	; 0
+ 22c:	98 d0       	rcall	.+304    	; 0x35e <__divmodsi4>
+ 22e:	6b 01       	movw	r12, r22
+ 230:	7c 01       	movw	r14, r24
+		USART_Transmit(x);
+ 232:	80 e3       	ldi	r24, 0x30	; 48
+ 234:	82 0f       	add	r24, r18
+ 236:	12 df       	rcall	.-476    	; 0x5c <USART_Transmit>
+		rise=rise%1000;
+		x=(rise/100)+48;
+ 238:	c7 01       	movw	r24, r14
+ 23a:	b6 01       	movw	r22, r12
+ 23c:	24 e6       	ldi	r18, 0x64	; 100
+ 23e:	30 e0       	ldi	r19, 0x00	; 0
+ 240:	40 e0       	ldi	r20, 0x00	; 0
+ 242:	50 e0       	ldi	r21, 0x00	; 0
+ 244:	8c d0       	rcall	.+280    	; 0x35e <__divmodsi4>
+ 246:	6b 01       	movw	r12, r22
+ 248:	7c 01       	movw	r14, r24
+		USART_Transmit(x);
+ 24a:	80 e3       	ldi	r24, 0x30	; 48
+ 24c:	82 0f       	add	r24, r18
+ 24e:	06 df       	rcall	.-500    	; 0x5c <USART_Transmit>
+		rise=rise%100;
+		x=(rise/10)+48;
+ 250:	c7 01       	movw	r24, r14
+ 252:	b6 01       	movw	r22, r12
+ 254:	a3 01       	movw	r20, r6
+ 256:	92 01       	movw	r18, r4
+ 258:	82 d0       	rcall	.+260    	; 0x35e <__divmodsi4>
+ 25a:	16 2f       	mov	r17, r22
+		USART_Transmit(x);
+ 25c:	80 e3       	ldi	r24, 0x30	; 48
+ 25e:	82 0f       	add	r24, r18
+ 260:	fd de       	rcall	.-518    	; 0x5c <USART_Transmit>
+		x=(rise%10)+48;
+		USART_Transmit(x);
+ 262:	80 e3       	ldi	r24, 0x30	; 48
+ 264:	81 0f       	add	r24, r17
+ 266:	fa de       	rcall	.-524    	; 0x5c <USART_Transmit>
+		transmit_str("sec");
+ 268:	89 e7       	ldi	r24, 0x79	; 121
+ 26a:	90 e0       	ldi	r25, 0x00	; 0
+ 26c:	fb de       	rcall	.-522    	; 0x64 <transmit_str>
+		USART_Transmit(' ');
+ 26e:	80 e2       	ldi	r24, 0x20	; 32
+ 270:	f5 de       	rcall	.-534    	; 0x5c <USART_Transmit>
+		USART_Transmit(' ');
+ 272:	80 e2       	ldi	r24, 0x20	; 32
+ 274:	f3 de       	rcall	.-538    	; 0x5c <USART_Transmit>
+		
+		fal=fal*32000;
+ 276:	a0 e0       	ldi	r26, 0x00	; 0
+ 278:	bd e7       	ldi	r27, 0x7D	; 125
+ 27a:	2d 81       	ldd	r18, Y+5	; 0x05
+ 27c:	3e 81       	ldd	r19, Y+6	; 0x06
+ 27e:	4f 81       	ldd	r20, Y+7	; 0x07
+ 280:	58 85       	ldd	r21, Y+8	; 0x08
+ 282:	89 d0       	rcall	.+274    	; 0x396 <__muluhisi3>
+ 284:	6b 01       	movw	r12, r22
+ 286:	7c 01       	movw	r14, r24
+		transmit_str("Fall time: 0.");
+ 288:	8d e7       	ldi	r24, 0x7D	; 125
+ 28a:	90 e0       	ldi	r25, 0x00	; 0
+ 28c:	eb de       	rcall	.-554    	; 0x64 <transmit_str>
+		x=(fal/100000000)+48;
+ 28e:	c7 01       	movw	r24, r14
+ 290:	b6 01       	movw	r22, r12
+ 292:	20 e0       	ldi	r18, 0x00	; 0
+ 294:	31 ee       	ldi	r19, 0xE1	; 225
+ 296:	45 ef       	ldi	r20, 0xF5	; 245
+ 298:	55 e0       	ldi	r21, 0x05	; 5
+ 29a:	61 d0       	rcall	.+194    	; 0x35e <__divmodsi4>
+ 29c:	6b 01       	movw	r12, r22
+ 29e:	7c 01       	movw	r14, r24
+		USART_Transmit(x);
+ 2a0:	80 e3       	ldi	r24, 0x30	; 48
+ 2a2:	82 0f       	add	r24, r18
+ 2a4:	db de       	rcall	.-586    	; 0x5c <USART_Transmit>
+		fal=fal%100000000;
+		x=(fal/10000000)+48;
+ 2a6:	c7 01       	movw	r24, r14
+ 2a8:	b6 01       	movw	r22, r12
+ 2aa:	20 e8       	ldi	r18, 0x80	; 128
+ 2ac:	36 e9       	ldi	r19, 0x96	; 150
+ 2ae:	48 e9       	ldi	r20, 0x98	; 152
+ 2b0:	50 e0       	ldi	r21, 0x00	; 0
+ 2b2:	55 d0       	rcall	.+170    	; 0x35e <__divmodsi4>
+ 2b4:	6b 01       	movw	r12, r22
+ 2b6:	7c 01       	movw	r14, r24
+		USART_Transmit(x);
+ 2b8:	80 e3       	ldi	r24, 0x30	; 48
+ 2ba:	82 0f       	add	r24, r18
+ 2bc:	cf de       	rcall	.-610    	; 0x5c <USART_Transmit>
+		fal=fal%10000000;
+		x=(fal/1000000)+48;
+ 2be:	c7 01       	movw	r24, r14
+ 2c0:	b6 01       	movw	r22, r12
+ 2c2:	20 e4       	ldi	r18, 0x40	; 64
+ 2c4:	32 e4       	ldi	r19, 0x42	; 66
+ 2c6:	4f e0       	ldi	r20, 0x0F	; 15
+ 2c8:	50 e0       	ldi	r21, 0x00	; 0
+ 2ca:	49 d0       	rcall	.+146    	; 0x35e <__divmodsi4>
+ 2cc:	6b 01       	movw	r12, r22
+ 2ce:	7c 01       	movw	r14, r24
+		USART_Transmit(x);
+ 2d0:	80 e3       	ldi	r24, 0x30	; 48
+ 2d2:	82 0f       	add	r24, r18
+ 2d4:	c3 de       	rcall	.-634    	; 0x5c <USART_Transmit>
+		fal=fal%1000000;
+		x=(fal/100000)+48;
+ 2d6:	c7 01       	movw	r24, r14
+ 2d8:	b6 01       	movw	r22, r12
+ 2da:	20 ea       	ldi	r18, 0xA0	; 160
+ 2dc:	36 e8       	ldi	r19, 0x86	; 134
+ 2de:	41 e0       	ldi	r20, 0x01	; 1
+ 2e0:	50 e0       	ldi	r21, 0x00	; 0
+ 2e2:	3d d0       	rcall	.+122    	; 0x35e <__divmodsi4>
+ 2e4:	6b 01       	movw	r12, r22
+ 2e6:	7c 01       	movw	r14, r24
+		USART_Transmit(x);
+ 2e8:	80 e3       	ldi	r24, 0x30	; 48
+ 2ea:	82 0f       	add	r24, r18
+ 2ec:	b7 de       	rcall	.-658    	; 0x5c <USART_Transmit>
+		fal=fal%100000;
+		x=(fal/10000)+48;
+ 2ee:	c7 01       	movw	r24, r14
+ 2f0:	b6 01       	movw	r22, r12
+ 2f2:	20 e1       	ldi	r18, 0x10	; 16
+ 2f4:	37 e2       	ldi	r19, 0x27	; 39
+ 2f6:	40 e0       	ldi	r20, 0x00	; 0
+ 2f8:	50 e0       	ldi	r21, 0x00	; 0
+ 2fa:	31 d0       	rcall	.+98     	; 0x35e <__divmodsi4>
+ 2fc:	6b 01       	movw	r12, r22
+ 2fe:	7c 01       	movw	r14, r24
+		USART_Transmit(x);
+ 300:	80 e3       	ldi	r24, 0x30	; 48
+ 302:	82 0f       	add	r24, r18
+ 304:	ab de       	rcall	.-682    	; 0x5c <USART_Transmit>
+		fal=fal%10000;
+		x=(fal/1000)+48;
+ 306:	c7 01       	movw	r24, r14
+ 308:	b6 01       	movw	r22, r12
+ 30a:	28 ee       	ldi	r18, 0xE8	; 232
+ 30c:	33 e0       	ldi	r19, 0x03	; 3
+ 30e:	40 e0       	ldi	r20, 0x00	; 0
+ 310:	50 e0       	ldi	r21, 0x00	; 0
+ 312:	25 d0       	rcall	.+74     	; 0x35e <__divmodsi4>
+ 314:	6b 01       	movw	r12, r22
+ 316:	7c 01       	movw	r14, r24
+		USART_Transmit(x);
+ 318:	80 e3       	ldi	r24, 0x30	; 48
+ 31a:	82 0f       	add	r24, r18
+ 31c:	9f de       	rcall	.-706    	; 0x5c <USART_Transmit>
+		fal=fal%1000;
+		x=(fal/100)+48;
+ 31e:	c7 01       	movw	r24, r14
+ 320:	b6 01       	movw	r22, r12
+ 322:	24 e6       	ldi	r18, 0x64	; 100
+ 324:	30 e0       	ldi	r19, 0x00	; 0
+ 326:	40 e0       	ldi	r20, 0x00	; 0
+ 328:	50 e0       	ldi	r21, 0x00	; 0
+ 32a:	19 d0       	rcall	.+50     	; 0x35e <__divmodsi4>
+ 32c:	6b 01       	movw	r12, r22
+ 32e:	7c 01       	movw	r14, r24
+		USART_Transmit(x);
+ 330:	80 e3       	ldi	r24, 0x30	; 48
+ 332:	82 0f       	add	r24, r18
+ 334:	93 de       	rcall	.-730    	; 0x5c <USART_Transmit>
+		fal=fal%100;
+		x=(fal/10)+48;
+ 336:	c7 01       	movw	r24, r14
+ 338:	b6 01       	movw	r22, r12
+ 33a:	a3 01       	movw	r20, r6
+ 33c:	92 01       	movw	r18, r4
+ 33e:	0f d0       	rcall	.+30     	; 0x35e <__divmodsi4>
+ 340:	16 2f       	mov	r17, r22
+		USART_Transmit(x);
+ 342:	80 e3       	ldi	r24, 0x30	; 48
+ 344:	82 0f       	add	r24, r18
+ 346:	8a de       	rcall	.-748    	; 0x5c <USART_Transmit>
+		x=(fal%10)+48;
+		USART_Transmit(x);
+ 348:	80 e3       	ldi	r24, 0x30	; 48
+ 34a:	81 0f       	add	r24, r17
+ 34c:	87 de       	rcall	.-754    	; 0x5c <USART_Transmit>
+		transmit_str("sec");
+ 34e:	89 e7       	ldi	r24, 0x79	; 121
+ 350:	90 e0       	ldi	r25, 0x00	; 0
+ 352:	88 de       	rcall	.-752    	; 0x64 <transmit_str>
+		USART_Transmit(' ');
+ 354:	80 e2       	ldi	r24, 0x20	; 32
+ 356:	82 de       	rcall	.-764    	; 0x5c <USART_Transmit>
+		USART_Transmit(' ');
+ 358:	80 e2       	ldi	r24, 0x20	; 32
+ 35a:	80 de       	rcall	.-768    	; 0x5c <USART_Transmit>
+		
+    }
+ 35c:	a8 ce       	rjmp	.-688    	; 0xae <main+0x2e>
+
+0000035e <__divmodsi4>:
+ 35e:	05 2e       	mov	r0, r21
+ 360:	97 fb       	bst	r25, 7
+ 362:	16 f4       	brtc	.+4      	; 0x368 <__divmodsi4+0xa>
+ 364:	00 94       	com	r0
+ 366:	0f d0       	rcall	.+30     	; 0x386 <__negsi2>
+ 368:	57 fd       	sbrc	r21, 7
+ 36a:	05 d0       	rcall	.+10     	; 0x376 <__divmodsi4_neg2>
+ 36c:	1e d0       	rcall	.+60     	; 0x3aa <__udivmodsi4>
+ 36e:	07 fc       	sbrc	r0, 7
+ 370:	02 d0       	rcall	.+4      	; 0x376 <__divmodsi4_neg2>
+ 372:	46 f4       	brtc	.+16     	; 0x384 <__divmodsi4_exit>
+ 374:	08 c0       	rjmp	.+16     	; 0x386 <__negsi2>
+
+00000376 <__divmodsi4_neg2>:
+ 376:	50 95       	com	r21
+ 378:	40 95       	com	r20
+ 37a:	30 95       	com	r19
+ 37c:	21 95       	neg	r18
+ 37e:	3f 4f       	sbci	r19, 0xFF	; 255
+ 380:	4f 4f       	sbci	r20, 0xFF	; 255
+ 382:	5f 4f       	sbci	r21, 0xFF	; 255
+
+00000384 <__divmodsi4_exit>:
+ 384:	08 95       	ret
+
+00000386 <__negsi2>:
+ 386:	90 95       	com	r25
+ 388:	80 95       	com	r24
+ 38a:	70 95       	com	r23
+ 38c:	61 95       	neg	r22
+ 38e:	7f 4f       	sbci	r23, 0xFF	; 255
+ 390:	8f 4f       	sbci	r24, 0xFF	; 255
+ 392:	9f 4f       	sbci	r25, 0xFF	; 255
+ 394:	08 95       	ret
+
+00000396 <__muluhisi3>:
+ 396:	2b d0       	rcall	.+86     	; 0x3ee <__umulhisi3>
+ 398:	a5 9f       	mul	r26, r21
+ 39a:	90 0d       	add	r25, r0
+ 39c:	b4 9f       	mul	r27, r20
+ 39e:	90 0d       	add	r25, r0
+ 3a0:	a4 9f       	mul	r26, r20
+ 3a2:	80 0d       	add	r24, r0
+ 3a4:	91 1d       	adc	r25, r1
+ 3a6:	11 24       	eor	r1, r1
+ 3a8:	08 95       	ret
+
+000003aa <__udivmodsi4>:
+ 3aa:	a1 e2       	ldi	r26, 0x21	; 33
+ 3ac:	1a 2e       	mov	r1, r26
+ 3ae:	aa 1b       	sub	r26, r26
+ 3b0:	bb 1b       	sub	r27, r27
+ 3b2:	fd 01       	movw	r30, r26
+ 3b4:	0d c0       	rjmp	.+26     	; 0x3d0 <__udivmodsi4_ep>
+
+000003b6 <__udivmodsi4_loop>:
+ 3b6:	aa 1f       	adc	r26, r26
+ 3b8:	bb 1f       	adc	r27, r27
+ 3ba:	ee 1f       	adc	r30, r30
+ 3bc:	ff 1f       	adc	r31, r31
+ 3be:	a2 17       	cp	r26, r18
+ 3c0:	b3 07       	cpc	r27, r19
+ 3c2:	e4 07       	cpc	r30, r20
+ 3c4:	f5 07       	cpc	r31, r21
+ 3c6:	20 f0       	brcs	.+8      	; 0x3d0 <__udivmodsi4_ep>
+ 3c8:	a2 1b       	sub	r26, r18
+ 3ca:	b3 0b       	sbc	r27, r19
+ 3cc:	e4 0b       	sbc	r30, r20
+ 3ce:	f5 0b       	sbc	r31, r21
+
+000003d0 <__udivmodsi4_ep>:
+ 3d0:	66 1f       	adc	r22, r22
+ 3d2:	77 1f       	adc	r23, r23
+ 3d4:	88 1f       	adc	r24, r24
+ 3d6:	99 1f       	adc	r25, r25
+ 3d8:	1a 94       	dec	r1
+ 3da:	69 f7       	brne	.-38     	; 0x3b6 <__udivmodsi4_loop>
+ 3dc:	60 95       	com	r22
+ 3de:	70 95       	com	r23
+ 3e0:	80 95       	com	r24
+ 3e2:	90 95       	com	r25
+ 3e4:	9b 01       	movw	r18, r22
+ 3e6:	ac 01       	movw	r20, r24
+ 3e8:	bd 01       	movw	r22, r26
+ 3ea:	cf 01       	movw	r24, r30
+ 3ec:	08 95       	ret
+
+000003ee <__umulhisi3>:
+ 3ee:	a2 9f       	mul	r26, r18
+ 3f0:	b0 01       	movw	r22, r0
+ 3f2:	b3 9f       	mul	r27, r19
+ 3f4:	c0 01       	movw	r24, r0
+ 3f6:	a3 9f       	mul	r26, r19
+ 3f8:	01 d0       	rcall	.+2      	; 0x3fc <__umulhisi3+0xe>
+ 3fa:	b2 9f       	mul	r27, r18
+ 3fc:	70 0d       	add	r23, r0
+ 3fe:	81 1d       	adc	r24, r1
+ 400:	11 24       	eor	r1, r1
+ 402:	91 1d       	adc	r25, r1
+ 404:	08 95       	ret
+
+00000406 <_exit>:
+ 406:	f8 94       	cli
+
+00000408 <__stop_program>:
+ 408:	ff cf       	rjmp	.-2      	; 0x408 <__stop_program>

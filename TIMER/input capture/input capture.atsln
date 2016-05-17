@@ -1,0 +1,20 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Atmel Studio Solution File, Format Version 11.00
+Project("{54F91283-7BC4-4236-8FF9-10F437C3AD48}") = "input capture", "input capture\input capture.cproj", "{171A8BB8-CE4E-426E-9A03-5E8D7F2904FD}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|AVR = Debug|AVR
+		Release|AVR = Release|AVR
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{171A8BB8-CE4E-426E-9A03-5E8D7F2904FD}.Debug|AVR.ActiveCfg = Debug|AVR
+		{171A8BB8-CE4E-426E-9A03-5E8D7F2904FD}.Debug|AVR.Build.0 = Debug|AVR
+		{171A8BB8-CE4E-426E-9A03-5E8D7F2904FD}.Release|AVR.ActiveCfg = Release|AVR
+		{171A8BB8-CE4E-426E-9A03-5E8D7F2904FD}.Release|AVR.Build.0 = Release|AVR
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

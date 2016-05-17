@@ -1,0 +1,710 @@
+
+input capture.elf:     file format elf32-avr
+
+Sections:
+Idx Name          Size      VMA       LMA       File off  Algn
+  0 .text         000003b0  00000000  00000000  00000074  2**1
+                  CONTENTS, ALLOC, LOAD, READONLY, CODE
+  1 .data         00000000  00800060  000003b0  00000424  2**0
+                  CONTENTS, ALLOC, LOAD, DATA
+  2 .comment      00000030  00000000  00000000  00000424  2**0
+                  CONTENTS, READONLY
+  3 .debug_aranges 00000030  00000000  00000000  00000454  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  4 .debug_info   000002cc  00000000  00000000  00000484  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  5 .debug_abbrev 000000d8  00000000  00000000  00000750  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  6 .debug_line   00000142  00000000  00000000  00000828  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  7 .debug_frame  00000054  00000000  00000000  0000096c  2**2
+                  CONTENTS, READONLY, DEBUGGING
+  8 .debug_str    00000154  00000000  00000000  000009c0  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  9 .debug_loc    000005c8  00000000  00000000  00000b14  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 10 .debug_ranges 00000020  00000000  00000000  000010dc  2**0
+                  CONTENTS, READONLY, DEBUGGING
+
+Disassembly of section .text:
+
+00000000 <__vectors>:
+   0:	12 c0       	rjmp	.+36     	; 0x26 <__ctors_end>
+   2:	19 c0       	rjmp	.+50     	; 0x36 <__bad_interrupt>
+   4:	18 c0       	rjmp	.+48     	; 0x36 <__bad_interrupt>
+   6:	17 c0       	rjmp	.+46     	; 0x36 <__bad_interrupt>
+   8:	16 c0       	rjmp	.+44     	; 0x36 <__bad_interrupt>
+   a:	15 c0       	rjmp	.+42     	; 0x36 <__bad_interrupt>
+   c:	14 c0       	rjmp	.+40     	; 0x36 <__bad_interrupt>
+   e:	13 c0       	rjmp	.+38     	; 0x36 <__bad_interrupt>
+  10:	12 c0       	rjmp	.+36     	; 0x36 <__bad_interrupt>
+  12:	11 c0       	rjmp	.+34     	; 0x36 <__bad_interrupt>
+  14:	10 c0       	rjmp	.+32     	; 0x36 <__bad_interrupt>
+  16:	0f c0       	rjmp	.+30     	; 0x36 <__bad_interrupt>
+  18:	0e c0       	rjmp	.+28     	; 0x36 <__bad_interrupt>
+  1a:	0d c0       	rjmp	.+26     	; 0x36 <__bad_interrupt>
+  1c:	0c c0       	rjmp	.+24     	; 0x36 <__bad_interrupt>
+  1e:	0b c0       	rjmp	.+22     	; 0x36 <__bad_interrupt>
+  20:	0a c0       	rjmp	.+20     	; 0x36 <__bad_interrupt>
+  22:	09 c0       	rjmp	.+18     	; 0x36 <__bad_interrupt>
+  24:	08 c0       	rjmp	.+16     	; 0x36 <__bad_interrupt>
+
+00000026 <__ctors_end>:
+  26:	11 24       	eor	r1, r1
+  28:	1f be       	out	0x3f, r1	; 63
+  2a:	cf e5       	ldi	r28, 0x5F	; 95
+  2c:	d4 e0       	ldi	r29, 0x04	; 4
+  2e:	de bf       	out	0x3e, r29	; 62
+  30:	cd bf       	out	0x3d, r28	; 61
+  32:	0d d0       	rcall	.+26     	; 0x4e <main>
+  34:	bb c1       	rjmp	.+886    	; 0x3ac <_exit>
+
+00000036 <__bad_interrupt>:
+  36:	e4 cf       	rjmp	.-56     	; 0x0 <__vectors>
+
+00000038 <USART_Init>:
+// func declaration
+//USART init,transmitt, receiver
+void USART_Init( unsigned int ubrr)
+{
+	/* Set baud rate */
+	UBRRH = (unsigned char)(ubrr>>8);
+  38:	90 bd       	out	0x20, r25	; 32
+	UBRRL = (unsigned char)ubrr;
+  3a:	89 b9       	out	0x09, r24	; 9
+	/* Enable receiver and transmitter */
+	UCSRB = (1<<RXEN)|(1<<TXEN);
+  3c:	88 e1       	ldi	r24, 0x18	; 24
+  3e:	8a b9       	out	0x0a, r24	; 10
+	/* Set frame format: 8data, 2stop bit */
+	UCSRC = (1<<URSEL)|(1<<USBS)|(3<<UCSZ0);
+  40:	8e e8       	ldi	r24, 0x8E	; 142
+  42:	80 bd       	out	0x20, r24	; 32
+  44:	08 95       	ret
+
+00000046 <USART_Transmit>:
+}
+void USART_Transmit( unsigned char data )
+{
+	/* Wait for empty transmit buffer */
+	while ( !( UCSRA & (1<<UDRE)) )
+  46:	5d 9b       	sbis	0x0b, 5	; 11
+  48:	fe cf       	rjmp	.-4      	; 0x46 <USART_Transmit>
+	;
+	/* Put data into buffer, sends the data */
+	UDR = data;
+  4a:	8c b9       	out	0x0c, r24	; 12
+  4c:	08 95       	ret
+
+0000004e <main>:
+void USART_Transmit(unsigned char data);
+void transmit_str(char *p);
+
+
+int main(void)
+{
+  4e:	cf 93       	push	r28
+  50:	df 93       	push	r29
+  52:	00 d0       	rcall	.+0      	; 0x54 <main+0x6>
+  54:	00 d0       	rcall	.+0      	; 0x56 <main+0x8>
+  56:	cd b7       	in	r28, 0x3d	; 61
+  58:	de b7       	in	r29, 0x3e	; 62
+	DDRB=0x00;
+  5a:	17 ba       	out	0x17, r1	; 23
+	USART_Init(51);
+  5c:	83 e3       	ldi	r24, 0x33	; 51
+  5e:	90 e0       	ldi	r25, 0x00	; 0
+  60:	eb df       	rcall	.-42     	; 0x38 <USART_Init>
+	TCCR1B=0x04;
+  62:	84 e0       	ldi	r24, 0x04	; 4
+  64:	8e bd       	out	0x2e, r24	; 46
+	while(1)
+    {
+		TCNT1=0;
+		while(!(TIFR&(1<<ICF1)));
+		TCCR1B|=0x40;
+		TIFR=(1<<ICF1);
+  66:	68 94       	set
+  68:	33 24       	eor	r3, r3
+  6a:	35 f8       	bld	r3, 5
+		tot=c-a;
+		rise=b-a;
+		fal=c-b;
+		
+		//tot=tot*256;
+		x=(tot/10000000)+48;
+  6c:	0f 2e       	mov	r0, r31
+  6e:	f0 e8       	ldi	r31, 0x80	; 128
+  70:	8f 2e       	mov	r8, r31
+  72:	f6 e9       	ldi	r31, 0x96	; 150
+  74:	9f 2e       	mov	r9, r31
+  76:	f8 e9       	ldi	r31, 0x98	; 152
+  78:	af 2e       	mov	r10, r31
+  7a:	b1 2c       	mov	r11, r1
+  7c:	f0 2d       	mov	r31, r0
+		USART_Transmit(x);
+		tot=tot%10000000;
+		x=(tot/1000000)+48;
+  7e:	0f 2e       	mov	r0, r31
+  80:	f0 e4       	ldi	r31, 0x40	; 64
+  82:	cf 2e       	mov	r12, r31
+  84:	f2 e4       	ldi	r31, 0x42	; 66
+  86:	df 2e       	mov	r13, r31
+  88:	ff e0       	ldi	r31, 0x0F	; 15
+  8a:	ef 2e       	mov	r14, r31
+  8c:	f1 2c       	mov	r15, r1
+  8e:	f0 2d       	mov	r31, r0
+		USART_Transmit(x);
+		tot=tot%1000;
+		x=(tot/100)+48;
+		USART_Transmit(x);
+		tot=tot%100;							// we devied by 2 as LM35 gives double value of the actual value i.e.
+		x=(tot/10)+48;
+  90:	0a e0       	ldi	r16, 0x0A	; 10
+  92:	10 e0       	ldi	r17, 0x00	; 0
+	//TIFR=(1<<ICF1);
+	int a,b,c,x,tot,rise,fal;	
+    
+	while(1)
+    {
+		TCNT1=0;
+  94:	1d bc       	out	0x2d, r1	; 45
+  96:	1c bc       	out	0x2c, r1	; 44
+		while(!(TIFR&(1<<ICF1)));
+  98:	08 b6       	in	r0, 0x38	; 56
+  9a:	05 fe       	sbrs	r0, 5
+  9c:	fd cf       	rjmp	.-6      	; 0x98 <main+0x4a>
+		TCCR1B|=0x40;
+  9e:	8e b5       	in	r24, 0x2e	; 46
+  a0:	80 64       	ori	r24, 0x40	; 64
+  a2:	8e bd       	out	0x2e, r24	; 46
+		TIFR=(1<<ICF1);
+  a4:	38 be       	out	0x38, r3	; 56
+
+        while(!(TIFR&(1<<ICF1)));
+  a6:	08 b6       	in	r0, 0x38	; 56
+  a8:	05 fe       	sbrs	r0, 5
+  aa:	fd cf       	rjmp	.-6      	; 0xa6 <main+0x58>
+		TIFR|=(1<<ICF1);
+  ac:	88 b7       	in	r24, 0x38	; 56
+  ae:	80 62       	ori	r24, 0x20	; 32
+  b0:	88 bf       	out	0x38, r24	; 56
+		TCCR1B&=0x0f;
+  b2:	8e b5       	in	r24, 0x2e	; 46
+  b4:	8f 70       	andi	r24, 0x0F	; 15
+  b6:	8e bd       	out	0x2e, r24	; 46
+		a=ICR1;
+  b8:	86 b5       	in	r24, 0x26	; 38
+  ba:	97 b5       	in	r25, 0x27	; 39
+		
+		while(!(TIFR&(1<<ICF1)));
+  bc:	08 b6       	in	r0, 0x38	; 56
+  be:	05 fe       	sbrs	r0, 5
+  c0:	fd cf       	rjmp	.-6      	; 0xbc <main+0x6e>
+		TIFR|=(1<<ICF1);
+  c2:	28 b7       	in	r18, 0x38	; 56
+  c4:	20 62       	ori	r18, 0x20	; 32
+  c6:	28 bf       	out	0x38, r18	; 56
+		TCCR1B|=0x40;
+  c8:	2e b5       	in	r18, 0x2e	; 46
+  ca:	20 64       	ori	r18, 0x40	; 64
+  cc:	2e bd       	out	0x2e, r18	; 46
+		b=ICR1;
+  ce:	26 b5       	in	r18, 0x26	; 38
+  d0:	37 b5       	in	r19, 0x27	; 39
+		
+		while(!(TIFR&(1<<ICF1)));
+  d2:	08 b6       	in	r0, 0x38	; 56
+  d4:	05 fe       	sbrs	r0, 5
+  d6:	fd cf       	rjmp	.-6      	; 0xd2 <main+0x84>
+		TIFR|=(1<<ICF1);
+  d8:	48 b7       	in	r20, 0x38	; 56
+  da:	40 62       	ori	r20, 0x20	; 32
+  dc:	48 bf       	out	0x38, r20	; 56
+		TCCR1B&=0x0f;
+  de:	4e b5       	in	r20, 0x2e	; 46
+  e0:	4f 70       	andi	r20, 0x0F	; 15
+  e2:	4e bd       	out	0x2e, r20	; 46
+		c=ICR1;
+  e4:	66 b5       	in	r22, 0x26	; 38
+  e6:	77 b5       	in	r23, 0x27	; 39
+		
+		tot=c-a;
+		rise=b-a;
+  e8:	a9 01       	movw	r20, r18
+  ea:	48 1b       	sub	r20, r24
+  ec:	59 0b       	sbc	r21, r25
+  ee:	5c 83       	std	Y+4, r21	; 0x04
+  f0:	4b 83       	std	Y+3, r20	; 0x03
+		fal=c-b;
+  f2:	fb 01       	movw	r30, r22
+  f4:	e2 1b       	sub	r30, r18
+  f6:	f3 0b       	sbc	r31, r19
+  f8:	fa 83       	std	Y+2, r31	; 0x02
+  fa:	e9 83       	std	Y+1, r30	; 0x01
+		while(!(TIFR&(1<<ICF1)));
+		TIFR|=(1<<ICF1);
+		TCCR1B&=0x0f;
+		c=ICR1;
+		
+		tot=c-a;
+  fc:	68 1b       	sub	r22, r24
+  fe:	79 0b       	sbc	r23, r25
+		rise=b-a;
+		fal=c-b;
+		
+		//tot=tot*256;
+		x=(tot/10000000)+48;
+ 100:	88 27       	eor	r24, r24
+ 102:	77 fd       	sbrc	r23, 7
+ 104:	80 95       	com	r24
+ 106:	98 2f       	mov	r25, r24
+ 108:	a5 01       	movw	r20, r10
+ 10a:	94 01       	movw	r18, r8
+ 10c:	fd d0       	rcall	.+506    	; 0x308 <__divmodsi4>
+ 10e:	2b 01       	movw	r4, r22
+ 110:	3c 01       	movw	r6, r24
+		USART_Transmit(x);
+ 112:	80 e3       	ldi	r24, 0x30	; 48
+ 114:	82 0f       	add	r24, r18
+ 116:	97 df       	rcall	.-210    	; 0x46 <USART_Transmit>
+		tot=tot%10000000;
+		x=(tot/1000000)+48;
+ 118:	b2 01       	movw	r22, r4
+ 11a:	88 27       	eor	r24, r24
+ 11c:	77 fd       	sbrc	r23, 7
+ 11e:	80 95       	com	r24
+ 120:	98 2f       	mov	r25, r24
+ 122:	a7 01       	movw	r20, r14
+ 124:	96 01       	movw	r18, r12
+ 126:	f0 d0       	rcall	.+480    	; 0x308 <__divmodsi4>
+ 128:	2b 01       	movw	r4, r22
+ 12a:	3c 01       	movw	r6, r24
+		USART_Transmit(x);
+ 12c:	80 e3       	ldi	r24, 0x30	; 48
+ 12e:	82 0f       	add	r24, r18
+ 130:	8a df       	rcall	.-236    	; 0x46 <USART_Transmit>
+		tot=tot%1000000;
+		x=(tot/100000)+48;
+ 132:	b2 01       	movw	r22, r4
+ 134:	88 27       	eor	r24, r24
+ 136:	77 fd       	sbrc	r23, 7
+ 138:	80 95       	com	r24
+ 13a:	98 2f       	mov	r25, r24
+ 13c:	20 ea       	ldi	r18, 0xA0	; 160
+ 13e:	36 e8       	ldi	r19, 0x86	; 134
+ 140:	41 e0       	ldi	r20, 0x01	; 1
+ 142:	50 e0       	ldi	r21, 0x00	; 0
+ 144:	e1 d0       	rcall	.+450    	; 0x308 <__divmodsi4>
+ 146:	2b 01       	movw	r4, r22
+ 148:	3c 01       	movw	r6, r24
+		USART_Transmit(x);
+ 14a:	80 e3       	ldi	r24, 0x30	; 48
+ 14c:	82 0f       	add	r24, r18
+ 14e:	7b df       	rcall	.-266    	; 0x46 <USART_Transmit>
+		tot=tot%100000;
+		x=(tot/10000)+48;
+ 150:	c2 01       	movw	r24, r4
+ 152:	60 e1       	ldi	r22, 0x10	; 16
+ 154:	77 e2       	ldi	r23, 0x27	; 39
+ 156:	c5 d0       	rcall	.+394    	; 0x2e2 <__divmodhi4>
+ 158:	3c 01       	movw	r6, r24
+		USART_Transmit(x);
+ 15a:	80 e3       	ldi	r24, 0x30	; 48
+ 15c:	86 0f       	add	r24, r22
+ 15e:	73 df       	rcall	.-282    	; 0x46 <USART_Transmit>
+		tot=tot%10000;
+		x=(tot/1000)+48;
+ 160:	c3 01       	movw	r24, r6
+ 162:	68 ee       	ldi	r22, 0xE8	; 232
+ 164:	73 e0       	ldi	r23, 0x03	; 3
+ 166:	bd d0       	rcall	.+378    	; 0x2e2 <__divmodhi4>
+ 168:	3c 01       	movw	r6, r24
+		USART_Transmit(x);
+ 16a:	80 e3       	ldi	r24, 0x30	; 48
+ 16c:	86 0f       	add	r24, r22
+ 16e:	6b df       	rcall	.-298    	; 0x46 <USART_Transmit>
+		tot=tot%1000;
+		x=(tot/100)+48;
+ 170:	c3 01       	movw	r24, r6
+ 172:	64 e6       	ldi	r22, 0x64	; 100
+ 174:	70 e0       	ldi	r23, 0x00	; 0
+ 176:	b5 d0       	rcall	.+362    	; 0x2e2 <__divmodhi4>
+ 178:	3c 01       	movw	r6, r24
+		USART_Transmit(x);
+ 17a:	80 e3       	ldi	r24, 0x30	; 48
+ 17c:	86 0f       	add	r24, r22
+ 17e:	63 df       	rcall	.-314    	; 0x46 <USART_Transmit>
+		tot=tot%100;							// we devied by 2 as LM35 gives double value of the actual value i.e.
+		x=(tot/10)+48;
+ 180:	c3 01       	movw	r24, r6
+ 182:	b8 01       	movw	r22, r16
+ 184:	ae d0       	rcall	.+348    	; 0x2e2 <__divmodhi4>
+ 186:	78 2e       	mov	r7, r24
+		USART_Transmit(x);
+ 188:	80 e3       	ldi	r24, 0x30	; 48
+ 18a:	86 0f       	add	r24, r22
+ 18c:	5c df       	rcall	.-328    	; 0x46 <USART_Transmit>
+		x=(tot%10)+48;
+		USART_Transmit(x);
+ 18e:	80 e3       	ldi	r24, 0x30	; 48
+ 190:	87 0d       	add	r24, r7
+ 192:	59 df       	rcall	.-334    	; 0x46 <USART_Transmit>
+		USART_Transmit(' ');
+ 194:	83 2d       	mov	r24, r3
+ 196:	57 df       	rcall	.-338    	; 0x46 <USART_Transmit>
+		USART_Transmit(' ');
+ 198:	83 2d       	mov	r24, r3
+ 19a:	55 df       	rcall	.-342    	; 0x46 <USART_Transmit>
+		
+		//rise=rise*256;
+		x=(rise/10000000)+48;
+ 19c:	2b 81       	ldd	r18, Y+3	; 0x03
+ 19e:	3c 81       	ldd	r19, Y+4	; 0x04
+ 1a0:	b9 01       	movw	r22, r18
+ 1a2:	88 27       	eor	r24, r24
+ 1a4:	77 fd       	sbrc	r23, 7
+ 1a6:	80 95       	com	r24
+ 1a8:	98 2f       	mov	r25, r24
+ 1aa:	a5 01       	movw	r20, r10
+ 1ac:	94 01       	movw	r18, r8
+ 1ae:	ac d0       	rcall	.+344    	; 0x308 <__divmodsi4>
+ 1b0:	2b 01       	movw	r4, r22
+ 1b2:	3c 01       	movw	r6, r24
+		USART_Transmit(x);
+ 1b4:	80 e3       	ldi	r24, 0x30	; 48
+ 1b6:	82 0f       	add	r24, r18
+ 1b8:	46 df       	rcall	.-372    	; 0x46 <USART_Transmit>
+		rise=rise%10000000;
+		x=(rise/1000000)+48;
+ 1ba:	b2 01       	movw	r22, r4
+ 1bc:	88 27       	eor	r24, r24
+ 1be:	77 fd       	sbrc	r23, 7
+ 1c0:	80 95       	com	r24
+ 1c2:	98 2f       	mov	r25, r24
+ 1c4:	a7 01       	movw	r20, r14
+ 1c6:	96 01       	movw	r18, r12
+ 1c8:	9f d0       	rcall	.+318    	; 0x308 <__divmodsi4>
+ 1ca:	2b 01       	movw	r4, r22
+ 1cc:	3c 01       	movw	r6, r24
+		USART_Transmit(x);
+ 1ce:	80 e3       	ldi	r24, 0x30	; 48
+ 1d0:	82 0f       	add	r24, r18
+ 1d2:	39 df       	rcall	.-398    	; 0x46 <USART_Transmit>
+		rise=rise%1000000;
+		x=(rise/100000)+48;
+ 1d4:	b2 01       	movw	r22, r4
+ 1d6:	88 27       	eor	r24, r24
+ 1d8:	77 fd       	sbrc	r23, 7
+ 1da:	80 95       	com	r24
+ 1dc:	98 2f       	mov	r25, r24
+ 1de:	20 ea       	ldi	r18, 0xA0	; 160
+ 1e0:	36 e8       	ldi	r19, 0x86	; 134
+ 1e2:	41 e0       	ldi	r20, 0x01	; 1
+ 1e4:	50 e0       	ldi	r21, 0x00	; 0
+ 1e6:	90 d0       	rcall	.+288    	; 0x308 <__divmodsi4>
+ 1e8:	2b 01       	movw	r4, r22
+ 1ea:	3c 01       	movw	r6, r24
+		USART_Transmit(x);
+ 1ec:	80 e3       	ldi	r24, 0x30	; 48
+ 1ee:	82 0f       	add	r24, r18
+ 1f0:	2a df       	rcall	.-428    	; 0x46 <USART_Transmit>
+		rise=rise%100000;
+		x=(rise/10000)+48;
+ 1f2:	c2 01       	movw	r24, r4
+ 1f4:	60 e1       	ldi	r22, 0x10	; 16
+ 1f6:	77 e2       	ldi	r23, 0x27	; 39
+ 1f8:	74 d0       	rcall	.+232    	; 0x2e2 <__divmodhi4>
+ 1fa:	3c 01       	movw	r6, r24
+		USART_Transmit(x);
+ 1fc:	80 e3       	ldi	r24, 0x30	; 48
+ 1fe:	86 0f       	add	r24, r22
+ 200:	22 df       	rcall	.-444    	; 0x46 <USART_Transmit>
+		rise=rise%10000;
+		x=(rise/1000)+48;
+ 202:	c3 01       	movw	r24, r6
+ 204:	68 ee       	ldi	r22, 0xE8	; 232
+ 206:	73 e0       	ldi	r23, 0x03	; 3
+ 208:	6c d0       	rcall	.+216    	; 0x2e2 <__divmodhi4>
+ 20a:	3c 01       	movw	r6, r24
+		USART_Transmit(x);
+ 20c:	80 e3       	ldi	r24, 0x30	; 48
+ 20e:	86 0f       	add	r24, r22
+ 210:	1a df       	rcall	.-460    	; 0x46 <USART_Transmit>
+		rise=rise%1000;
+		x=(rise/100)+48;
+ 212:	c3 01       	movw	r24, r6
+ 214:	64 e6       	ldi	r22, 0x64	; 100
+ 216:	70 e0       	ldi	r23, 0x00	; 0
+ 218:	64 d0       	rcall	.+200    	; 0x2e2 <__divmodhi4>
+ 21a:	3c 01       	movw	r6, r24
+		USART_Transmit(x);
+ 21c:	80 e3       	ldi	r24, 0x30	; 48
+ 21e:	86 0f       	add	r24, r22
+ 220:	12 df       	rcall	.-476    	; 0x46 <USART_Transmit>
+		rise=rise%100;							// we devied by 2 as LM35 gives double value of the actual value i.e.
+		x=(rise/10)+48;
+ 222:	c3 01       	movw	r24, r6
+ 224:	b8 01       	movw	r22, r16
+ 226:	5d d0       	rcall	.+186    	; 0x2e2 <__divmodhi4>
+ 228:	78 2e       	mov	r7, r24
+		USART_Transmit(x);
+ 22a:	80 e3       	ldi	r24, 0x30	; 48
+ 22c:	86 0f       	add	r24, r22
+ 22e:	0b df       	rcall	.-490    	; 0x46 <USART_Transmit>
+		x=(rise%10)+48;
+		USART_Transmit(x);
+ 230:	80 e3       	ldi	r24, 0x30	; 48
+ 232:	87 0d       	add	r24, r7
+ 234:	08 df       	rcall	.-496    	; 0x46 <USART_Transmit>
+		USART_Transmit(' ');
+ 236:	83 2d       	mov	r24, r3
+ 238:	06 df       	rcall	.-500    	; 0x46 <USART_Transmit>
+		USART_Transmit(' ');
+ 23a:	83 2d       	mov	r24, r3
+ 23c:	04 df       	rcall	.-504    	; 0x46 <USART_Transmit>
+		
+		//fal=fal*256;
+		x=(fal/10000000)+48;
+ 23e:	49 81       	ldd	r20, Y+1	; 0x01
+ 240:	5a 81       	ldd	r21, Y+2	; 0x02
+ 242:	ba 01       	movw	r22, r20
+ 244:	88 27       	eor	r24, r24
+ 246:	77 fd       	sbrc	r23, 7
+ 248:	80 95       	com	r24
+ 24a:	98 2f       	mov	r25, r24
+ 24c:	a5 01       	movw	r20, r10
+ 24e:	94 01       	movw	r18, r8
+ 250:	5b d0       	rcall	.+182    	; 0x308 <__divmodsi4>
+ 252:	2b 01       	movw	r4, r22
+ 254:	3c 01       	movw	r6, r24
+		USART_Transmit(x);
+ 256:	80 e3       	ldi	r24, 0x30	; 48
+ 258:	82 0f       	add	r24, r18
+ 25a:	f5 de       	rcall	.-534    	; 0x46 <USART_Transmit>
+		fal=fal%10000000;
+		x=(fal/1000000)+48;
+ 25c:	b2 01       	movw	r22, r4
+ 25e:	88 27       	eor	r24, r24
+ 260:	77 fd       	sbrc	r23, 7
+ 262:	80 95       	com	r24
+ 264:	98 2f       	mov	r25, r24
+ 266:	a7 01       	movw	r20, r14
+ 268:	96 01       	movw	r18, r12
+ 26a:	4e d0       	rcall	.+156    	; 0x308 <__divmodsi4>
+ 26c:	2b 01       	movw	r4, r22
+ 26e:	3c 01       	movw	r6, r24
+		USART_Transmit(x);
+ 270:	80 e3       	ldi	r24, 0x30	; 48
+ 272:	82 0f       	add	r24, r18
+ 274:	e8 de       	rcall	.-560    	; 0x46 <USART_Transmit>
+		fal=fal%1000000;
+		x=(fal/100000)+48;
+ 276:	b2 01       	movw	r22, r4
+ 278:	88 27       	eor	r24, r24
+ 27a:	77 fd       	sbrc	r23, 7
+ 27c:	80 95       	com	r24
+ 27e:	98 2f       	mov	r25, r24
+ 280:	20 ea       	ldi	r18, 0xA0	; 160
+ 282:	36 e8       	ldi	r19, 0x86	; 134
+ 284:	41 e0       	ldi	r20, 0x01	; 1
+ 286:	50 e0       	ldi	r21, 0x00	; 0
+ 288:	3f d0       	rcall	.+126    	; 0x308 <__divmodsi4>
+ 28a:	2b 01       	movw	r4, r22
+ 28c:	3c 01       	movw	r6, r24
+		USART_Transmit(x);
+ 28e:	80 e3       	ldi	r24, 0x30	; 48
+ 290:	82 0f       	add	r24, r18
+ 292:	d9 de       	rcall	.-590    	; 0x46 <USART_Transmit>
+		fal=fal%100000;
+		x=(fal/10000)+48;
+ 294:	c2 01       	movw	r24, r4
+ 296:	60 e1       	ldi	r22, 0x10	; 16
+ 298:	77 e2       	ldi	r23, 0x27	; 39
+ 29a:	23 d0       	rcall	.+70     	; 0x2e2 <__divmodhi4>
+ 29c:	3c 01       	movw	r6, r24
+		USART_Transmit(x);
+ 29e:	80 e3       	ldi	r24, 0x30	; 48
+ 2a0:	86 0f       	add	r24, r22
+ 2a2:	d1 de       	rcall	.-606    	; 0x46 <USART_Transmit>
+		fal=fal%10000;
+		x=(fal/1000)+48;
+ 2a4:	c3 01       	movw	r24, r6
+ 2a6:	68 ee       	ldi	r22, 0xE8	; 232
+ 2a8:	73 e0       	ldi	r23, 0x03	; 3
+ 2aa:	1b d0       	rcall	.+54     	; 0x2e2 <__divmodhi4>
+ 2ac:	3c 01       	movw	r6, r24
+		USART_Transmit(x);
+ 2ae:	80 e3       	ldi	r24, 0x30	; 48
+ 2b0:	86 0f       	add	r24, r22
+ 2b2:	c9 de       	rcall	.-622    	; 0x46 <USART_Transmit>
+		fal=fal%1000;
+		x=(fal/100)+48;
+ 2b4:	c3 01       	movw	r24, r6
+ 2b6:	64 e6       	ldi	r22, 0x64	; 100
+ 2b8:	70 e0       	ldi	r23, 0x00	; 0
+ 2ba:	13 d0       	rcall	.+38     	; 0x2e2 <__divmodhi4>
+ 2bc:	3c 01       	movw	r6, r24
+		USART_Transmit(x);
+ 2be:	80 e3       	ldi	r24, 0x30	; 48
+ 2c0:	86 0f       	add	r24, r22
+ 2c2:	c1 de       	rcall	.-638    	; 0x46 <USART_Transmit>
+		fal=fal%100;							// we devied by 2 as LM35 gives double value of the actual value i.e.
+		x=(fal/10)+48;
+ 2c4:	c3 01       	movw	r24, r6
+ 2c6:	b8 01       	movw	r22, r16
+ 2c8:	0c d0       	rcall	.+24     	; 0x2e2 <__divmodhi4>
+ 2ca:	78 2e       	mov	r7, r24
+		USART_Transmit(x);
+ 2cc:	80 e3       	ldi	r24, 0x30	; 48
+ 2ce:	86 0f       	add	r24, r22
+ 2d0:	ba de       	rcall	.-652    	; 0x46 <USART_Transmit>
+		x=(fal%10)+48;
+		USART_Transmit(x);
+ 2d2:	80 e3       	ldi	r24, 0x30	; 48
+ 2d4:	87 0d       	add	r24, r7
+ 2d6:	b7 de       	rcall	.-658    	; 0x46 <USART_Transmit>
+		USART_Transmit(' ');
+ 2d8:	83 2d       	mov	r24, r3
+ 2da:	b5 de       	rcall	.-662    	; 0x46 <USART_Transmit>
+		USART_Transmit(' ');
+ 2dc:	83 2d       	mov	r24, r3
+ 2de:	b3 de       	rcall	.-666    	; 0x46 <USART_Transmit>
+		
+    }
+ 2e0:	d9 ce       	rjmp	.-590    	; 0x94 <main+0x46>
+
+000002e2 <__divmodhi4>:
+ 2e2:	97 fb       	bst	r25, 7
+ 2e4:	07 2e       	mov	r0, r23
+ 2e6:	16 f4       	brtc	.+4      	; 0x2ec <__divmodhi4+0xa>
+ 2e8:	00 94       	com	r0
+ 2ea:	06 d0       	rcall	.+12     	; 0x2f8 <__divmodhi4_neg1>
+ 2ec:	77 fd       	sbrc	r23, 7
+ 2ee:	08 d0       	rcall	.+16     	; 0x300 <__divmodhi4_neg2>
+ 2f0:	27 d0       	rcall	.+78     	; 0x340 <__udivmodhi4>
+ 2f2:	07 fc       	sbrc	r0, 7
+ 2f4:	05 d0       	rcall	.+10     	; 0x300 <__divmodhi4_neg2>
+ 2f6:	3e f4       	brtc	.+14     	; 0x306 <__divmodhi4_exit>
+
+000002f8 <__divmodhi4_neg1>:
+ 2f8:	90 95       	com	r25
+ 2fa:	81 95       	neg	r24
+ 2fc:	9f 4f       	sbci	r25, 0xFF	; 255
+ 2fe:	08 95       	ret
+
+00000300 <__divmodhi4_neg2>:
+ 300:	70 95       	com	r23
+ 302:	61 95       	neg	r22
+ 304:	7f 4f       	sbci	r23, 0xFF	; 255
+
+00000306 <__divmodhi4_exit>:
+ 306:	08 95       	ret
+
+00000308 <__divmodsi4>:
+ 308:	05 2e       	mov	r0, r21
+ 30a:	97 fb       	bst	r25, 7
+ 30c:	16 f4       	brtc	.+4      	; 0x312 <__divmodsi4+0xa>
+ 30e:	00 94       	com	r0
+ 310:	0f d0       	rcall	.+30     	; 0x330 <__negsi2>
+ 312:	57 fd       	sbrc	r21, 7
+ 314:	05 d0       	rcall	.+10     	; 0x320 <__divmodsi4_neg2>
+ 316:	28 d0       	rcall	.+80     	; 0x368 <__udivmodsi4>
+ 318:	07 fc       	sbrc	r0, 7
+ 31a:	02 d0       	rcall	.+4      	; 0x320 <__divmodsi4_neg2>
+ 31c:	46 f4       	brtc	.+16     	; 0x32e <__divmodsi4_exit>
+ 31e:	08 c0       	rjmp	.+16     	; 0x330 <__negsi2>
+
+00000320 <__divmodsi4_neg2>:
+ 320:	50 95       	com	r21
+ 322:	40 95       	com	r20
+ 324:	30 95       	com	r19
+ 326:	21 95       	neg	r18
+ 328:	3f 4f       	sbci	r19, 0xFF	; 255
+ 32a:	4f 4f       	sbci	r20, 0xFF	; 255
+ 32c:	5f 4f       	sbci	r21, 0xFF	; 255
+
+0000032e <__divmodsi4_exit>:
+ 32e:	08 95       	ret
+
+00000330 <__negsi2>:
+ 330:	90 95       	com	r25
+ 332:	80 95       	com	r24
+ 334:	70 95       	com	r23
+ 336:	61 95       	neg	r22
+ 338:	7f 4f       	sbci	r23, 0xFF	; 255
+ 33a:	8f 4f       	sbci	r24, 0xFF	; 255
+ 33c:	9f 4f       	sbci	r25, 0xFF	; 255
+ 33e:	08 95       	ret
+
+00000340 <__udivmodhi4>:
+ 340:	aa 1b       	sub	r26, r26
+ 342:	bb 1b       	sub	r27, r27
+ 344:	51 e1       	ldi	r21, 0x11	; 17
+ 346:	07 c0       	rjmp	.+14     	; 0x356 <__udivmodhi4_ep>
+
+00000348 <__udivmodhi4_loop>:
+ 348:	aa 1f       	adc	r26, r26
+ 34a:	bb 1f       	adc	r27, r27
+ 34c:	a6 17       	cp	r26, r22
+ 34e:	b7 07       	cpc	r27, r23
+ 350:	10 f0       	brcs	.+4      	; 0x356 <__udivmodhi4_ep>
+ 352:	a6 1b       	sub	r26, r22
+ 354:	b7 0b       	sbc	r27, r23
+
+00000356 <__udivmodhi4_ep>:
+ 356:	88 1f       	adc	r24, r24
+ 358:	99 1f       	adc	r25, r25
+ 35a:	5a 95       	dec	r21
+ 35c:	a9 f7       	brne	.-22     	; 0x348 <__udivmodhi4_loop>
+ 35e:	80 95       	com	r24
+ 360:	90 95       	com	r25
+ 362:	bc 01       	movw	r22, r24
+ 364:	cd 01       	movw	r24, r26
+ 366:	08 95       	ret
+
+00000368 <__udivmodsi4>:
+ 368:	a1 e2       	ldi	r26, 0x21	; 33
+ 36a:	1a 2e       	mov	r1, r26
+ 36c:	aa 1b       	sub	r26, r26
+ 36e:	bb 1b       	sub	r27, r27
+ 370:	fd 01       	movw	r30, r26
+ 372:	0d c0       	rjmp	.+26     	; 0x38e <__udivmodsi4_ep>
+
+00000374 <__udivmodsi4_loop>:
+ 374:	aa 1f       	adc	r26, r26
+ 376:	bb 1f       	adc	r27, r27
+ 378:	ee 1f       	adc	r30, r30
+ 37a:	ff 1f       	adc	r31, r31
+ 37c:	a2 17       	cp	r26, r18
+ 37e:	b3 07       	cpc	r27, r19
+ 380:	e4 07       	cpc	r30, r20
+ 382:	f5 07       	cpc	r31, r21
+ 384:	20 f0       	brcs	.+8      	; 0x38e <__udivmodsi4_ep>
+ 386:	a2 1b       	sub	r26, r18
+ 388:	b3 0b       	sbc	r27, r19
+ 38a:	e4 0b       	sbc	r30, r20
+ 38c:	f5 0b       	sbc	r31, r21
+
+0000038e <__udivmodsi4_ep>:
+ 38e:	66 1f       	adc	r22, r22
+ 390:	77 1f       	adc	r23, r23
+ 392:	88 1f       	adc	r24, r24
+ 394:	99 1f       	adc	r25, r25
+ 396:	1a 94       	dec	r1
+ 398:	69 f7       	brne	.-38     	; 0x374 <__udivmodsi4_loop>
+ 39a:	60 95       	com	r22
+ 39c:	70 95       	com	r23
+ 39e:	80 95       	com	r24
+ 3a0:	90 95       	com	r25
+ 3a2:	9b 01       	movw	r18, r22
+ 3a4:	ac 01       	movw	r20, r24
+ 3a6:	bd 01       	movw	r22, r26
+ 3a8:	cf 01       	movw	r24, r30
+ 3aa:	08 95       	ret
+
+000003ac <_exit>:
+ 3ac:	f8 94       	cli
+
+000003ae <__stop_program>:
+ 3ae:	ff cf       	rjmp	.-2      	; 0x3ae <__stop_program>

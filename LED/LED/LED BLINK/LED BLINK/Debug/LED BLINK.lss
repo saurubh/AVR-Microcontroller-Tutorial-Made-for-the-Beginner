@@ -1,0 +1,293 @@
+
+LED BLINK.elf:     file format elf32-avr
+
+Sections:
+Idx Name          Size      VMA       LMA       File off  Algn
+  0 .text         0000017e  00000000  00000000  00000074  2**1
+                  CONTENTS, ALLOC, LOAD, READONLY, CODE
+  1 .data         00000000  00800060  0000017e  000001f2  2**0
+                  CONTENTS, ALLOC, LOAD, DATA
+  2 .comment      00000030  00000000  00000000  000001f2  2**0
+                  CONTENTS, READONLY
+  3 .debug_aranges 00000020  00000000  00000000  00000222  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  4 .debug_info   0000043f  00000000  00000000  00000242  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  5 .debug_abbrev 000000cf  00000000  00000000  00000681  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  6 .debug_line   00000255  00000000  00000000  00000750  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  7 .debug_frame  00000024  00000000  00000000  000009a8  2**2
+                  CONTENTS, READONLY, DEBUGGING
+  8 .debug_str    0000015f  00000000  00000000  000009cc  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  9 .debug_ranges 00000010  00000000  00000000  00000b2b  2**0
+                  CONTENTS, READONLY, DEBUGGING
+
+Disassembly of section .text:
+
+00000000 <__vectors>:
+   0:	12 c0       	rjmp	.+36     	; 0x26 <__ctors_end>
+   2:	19 c0       	rjmp	.+50     	; 0x36 <__bad_interrupt>
+   4:	18 c0       	rjmp	.+48     	; 0x36 <__bad_interrupt>
+   6:	17 c0       	rjmp	.+46     	; 0x36 <__bad_interrupt>
+   8:	16 c0       	rjmp	.+44     	; 0x36 <__bad_interrupt>
+   a:	15 c0       	rjmp	.+42     	; 0x36 <__bad_interrupt>
+   c:	14 c0       	rjmp	.+40     	; 0x36 <__bad_interrupt>
+   e:	13 c0       	rjmp	.+38     	; 0x36 <__bad_interrupt>
+  10:	12 c0       	rjmp	.+36     	; 0x36 <__bad_interrupt>
+  12:	11 c0       	rjmp	.+34     	; 0x36 <__bad_interrupt>
+  14:	10 c0       	rjmp	.+32     	; 0x36 <__bad_interrupt>
+  16:	0f c0       	rjmp	.+30     	; 0x36 <__bad_interrupt>
+  18:	0e c0       	rjmp	.+28     	; 0x36 <__bad_interrupt>
+  1a:	0d c0       	rjmp	.+26     	; 0x36 <__bad_interrupt>
+  1c:	0c c0       	rjmp	.+24     	; 0x36 <__bad_interrupt>
+  1e:	0b c0       	rjmp	.+22     	; 0x36 <__bad_interrupt>
+  20:	0a c0       	rjmp	.+20     	; 0x36 <__bad_interrupt>
+  22:	09 c0       	rjmp	.+18     	; 0x36 <__bad_interrupt>
+  24:	08 c0       	rjmp	.+16     	; 0x36 <__bad_interrupt>
+
+00000026 <__ctors_end>:
+  26:	11 24       	eor	r1, r1
+  28:	1f be       	out	0x3f, r1	; 63
+  2a:	cf e5       	ldi	r28, 0x5F	; 95
+  2c:	d4 e0       	ldi	r29, 0x04	; 4
+  2e:	de bf       	out	0x3e, r29	; 62
+  30:	cd bf       	out	0x3d, r28	; 61
+  32:	02 d0       	rcall	.+4      	; 0x38 <main>
+  34:	a2 c0       	rjmp	.+324    	; 0x17a <_exit>
+
+00000036 <__bad_interrupt>:
+  36:	e4 cf       	rjmp	.-56     	; 0x0 <__vectors>
+
+00000038 <main>:
+
+#include <avr/io.h>
+#include <util/delay.h>
+void main()
+{
+	DDRB=0XFF;
+  38:	8f ef       	ldi	r24, 0xFF	; 255
+  3a:	87 bb       	out	0x17, r24	; 23
+    while(1)
+    {
+        PORTB=0X01;                    //0X01 means port B0 LED on and all off  can also be written as 0b.00000001
+  3c:	61 e0       	ldi	r22, 0x01	; 1
+		_delay_ms(1000); 
+		PORTB=0X02;                    //0X01 means port B1 LED on and all off  can also be written as 0b.00000001
+  3e:	52 e0       	ldi	r21, 0x02	; 2
+		_delay_ms(1000);
+		PORTB=0X04;                    //0X01 means port B2 LED on and all off  can also be written as 0b.00000001
+  40:	44 e0       	ldi	r20, 0x04	; 4
+		_delay_ms(1000);
+		PORTB=0X08;                    //0X01 means port B3 LED on and all off  can also be written as 0b.00000001
+  42:	38 e0       	ldi	r19, 0x08	; 8
+		_delay_ms(1000);
+		PORTB=0X10;                    //0X01 means port B4 LED on and all off  can also be written as 0b.00000001
+  44:	20 e1       	ldi	r18, 0x10	; 16
+		_delay_ms(1000);
+		PORTB=0X20;                    //0X01 means port B5 LED on and all off  can also be written as 0b.00000001
+  46:	90 e2       	ldi	r25, 0x20	; 32
+		_delay_ms(1000);
+		PORTB=0X40;                    //0X01 means port B6 LED on and all off  can also be written as 0b.00000001
+  48:	80 e4       	ldi	r24, 0x40	; 64
+		_delay_ms(1000);
+		PORTB=0X80;                    //0X01 means port B7 LED on and all off  can also be written as 0b.00000001
+  4a:	70 e8       	ldi	r23, 0x80	; 128
+void main()
+{
+	DDRB=0XFF;
+    while(1)
+    {
+        PORTB=0X01;                    //0X01 means port B0 LED on and all off  can also be written as 0b.00000001
+  4c:	68 bb       	out	0x18, r22	; 24
+	#else
+		//round up by default
+		__ticks_dc = (uint32_t)(ceil(fabs(__tmp)));
+	#endif
+
+	__builtin_avr_delay_cycles(__ticks_dc);
+  4e:	af e3       	ldi	r26, 0x3F	; 63
+  50:	ed e0       	ldi	r30, 0x0D	; 13
+  52:	f3 e0       	ldi	r31, 0x03	; 3
+  54:	a1 50       	subi	r26, 0x01	; 1
+  56:	e0 40       	sbci	r30, 0x00	; 0
+  58:	f0 40       	sbci	r31, 0x00	; 0
+  5a:	e1 f7       	brne	.-8      	; 0x54 <__SREG__+0x15>
+  5c:	00 c0       	rjmp	.+0      	; 0x5e <__SREG__+0x1f>
+  5e:	00 00       	nop
+		_delay_ms(1000); 
+		PORTB=0X02;                    //0X01 means port B1 LED on and all off  can also be written as 0b.00000001
+  60:	58 bb       	out	0x18, r21	; 24
+  62:	af e3       	ldi	r26, 0x3F	; 63
+  64:	ed e0       	ldi	r30, 0x0D	; 13
+  66:	f3 e0       	ldi	r31, 0x03	; 3
+  68:	a1 50       	subi	r26, 0x01	; 1
+  6a:	e0 40       	sbci	r30, 0x00	; 0
+  6c:	f0 40       	sbci	r31, 0x00	; 0
+  6e:	e1 f7       	brne	.-8      	; 0x68 <__SREG__+0x29>
+  70:	00 c0       	rjmp	.+0      	; 0x72 <__SREG__+0x33>
+  72:	00 00       	nop
+		_delay_ms(1000);
+		PORTB=0X04;                    //0X01 means port B2 LED on and all off  can also be written as 0b.00000001
+  74:	48 bb       	out	0x18, r20	; 24
+  76:	af e3       	ldi	r26, 0x3F	; 63
+  78:	ed e0       	ldi	r30, 0x0D	; 13
+  7a:	f3 e0       	ldi	r31, 0x03	; 3
+  7c:	a1 50       	subi	r26, 0x01	; 1
+  7e:	e0 40       	sbci	r30, 0x00	; 0
+  80:	f0 40       	sbci	r31, 0x00	; 0
+  82:	e1 f7       	brne	.-8      	; 0x7c <__SREG__+0x3d>
+  84:	00 c0       	rjmp	.+0      	; 0x86 <__SREG__+0x47>
+  86:	00 00       	nop
+		_delay_ms(1000);
+		PORTB=0X08;                    //0X01 means port B3 LED on and all off  can also be written as 0b.00000001
+  88:	38 bb       	out	0x18, r19	; 24
+  8a:	af e3       	ldi	r26, 0x3F	; 63
+  8c:	ed e0       	ldi	r30, 0x0D	; 13
+  8e:	f3 e0       	ldi	r31, 0x03	; 3
+  90:	a1 50       	subi	r26, 0x01	; 1
+  92:	e0 40       	sbci	r30, 0x00	; 0
+  94:	f0 40       	sbci	r31, 0x00	; 0
+  96:	e1 f7       	brne	.-8      	; 0x90 <__SREG__+0x51>
+  98:	00 c0       	rjmp	.+0      	; 0x9a <__SREG__+0x5b>
+  9a:	00 00       	nop
+		_delay_ms(1000);
+		PORTB=0X10;                    //0X01 means port B4 LED on and all off  can also be written as 0b.00000001
+  9c:	28 bb       	out	0x18, r18	; 24
+  9e:	af e3       	ldi	r26, 0x3F	; 63
+  a0:	ed e0       	ldi	r30, 0x0D	; 13
+  a2:	f3 e0       	ldi	r31, 0x03	; 3
+  a4:	a1 50       	subi	r26, 0x01	; 1
+  a6:	e0 40       	sbci	r30, 0x00	; 0
+  a8:	f0 40       	sbci	r31, 0x00	; 0
+  aa:	e1 f7       	brne	.-8      	; 0xa4 <__SREG__+0x65>
+  ac:	00 c0       	rjmp	.+0      	; 0xae <__SREG__+0x6f>
+  ae:	00 00       	nop
+		_delay_ms(1000);
+		PORTB=0X20;                    //0X01 means port B5 LED on and all off  can also be written as 0b.00000001
+  b0:	98 bb       	out	0x18, r25	; 24
+  b2:	af e3       	ldi	r26, 0x3F	; 63
+  b4:	ed e0       	ldi	r30, 0x0D	; 13
+  b6:	f3 e0       	ldi	r31, 0x03	; 3
+  b8:	a1 50       	subi	r26, 0x01	; 1
+  ba:	e0 40       	sbci	r30, 0x00	; 0
+  bc:	f0 40       	sbci	r31, 0x00	; 0
+  be:	e1 f7       	brne	.-8      	; 0xb8 <__SREG__+0x79>
+  c0:	00 c0       	rjmp	.+0      	; 0xc2 <__SREG__+0x83>
+  c2:	00 00       	nop
+		_delay_ms(1000);
+		PORTB=0X40;                    //0X01 means port B6 LED on and all off  can also be written as 0b.00000001
+  c4:	88 bb       	out	0x18, r24	; 24
+  c6:	af e3       	ldi	r26, 0x3F	; 63
+  c8:	ed e0       	ldi	r30, 0x0D	; 13
+  ca:	f3 e0       	ldi	r31, 0x03	; 3
+  cc:	a1 50       	subi	r26, 0x01	; 1
+  ce:	e0 40       	sbci	r30, 0x00	; 0
+  d0:	f0 40       	sbci	r31, 0x00	; 0
+  d2:	e1 f7       	brne	.-8      	; 0xcc <__SREG__+0x8d>
+  d4:	00 c0       	rjmp	.+0      	; 0xd6 <__SREG__+0x97>
+  d6:	00 00       	nop
+		_delay_ms(1000);
+		PORTB=0X80;                    //0X01 means port B7 LED on and all off  can also be written as 0b.00000001
+  d8:	78 bb       	out	0x18, r23	; 24
+  da:	af e3       	ldi	r26, 0x3F	; 63
+  dc:	ed e0       	ldi	r30, 0x0D	; 13
+  de:	f3 e0       	ldi	r31, 0x03	; 3
+  e0:	a1 50       	subi	r26, 0x01	; 1
+  e2:	e0 40       	sbci	r30, 0x00	; 0
+  e4:	f0 40       	sbci	r31, 0x00	; 0
+  e6:	e1 f7       	brne	.-8      	; 0xe0 <__SREG__+0xa1>
+  e8:	00 c0       	rjmp	.+0      	; 0xea <__SREG__+0xab>
+  ea:	00 00       	nop
+		_delay_ms(1000);
+		PORTB=0X40;                    //0X01 means port B6 LED on and all off  can also be written as 0b.00000001
+  ec:	88 bb       	out	0x18, r24	; 24
+  ee:	af e3       	ldi	r26, 0x3F	; 63
+  f0:	ed e0       	ldi	r30, 0x0D	; 13
+  f2:	f3 e0       	ldi	r31, 0x03	; 3
+  f4:	a1 50       	subi	r26, 0x01	; 1
+  f6:	e0 40       	sbci	r30, 0x00	; 0
+  f8:	f0 40       	sbci	r31, 0x00	; 0
+  fa:	e1 f7       	brne	.-8      	; 0xf4 <__SREG__+0xb5>
+  fc:	00 c0       	rjmp	.+0      	; 0xfe <__SREG__+0xbf>
+  fe:	00 00       	nop
+		_delay_ms(1000);
+		PORTB=0X20;                    //0X01 means port B5 LED on and all off  can also be written as 0b.00000001
+ 100:	98 bb       	out	0x18, r25	; 24
+ 102:	af e3       	ldi	r26, 0x3F	; 63
+ 104:	ed e0       	ldi	r30, 0x0D	; 13
+ 106:	f3 e0       	ldi	r31, 0x03	; 3
+ 108:	a1 50       	subi	r26, 0x01	; 1
+ 10a:	e0 40       	sbci	r30, 0x00	; 0
+ 10c:	f0 40       	sbci	r31, 0x00	; 0
+ 10e:	e1 f7       	brne	.-8      	; 0x108 <__SREG__+0xc9>
+ 110:	00 c0       	rjmp	.+0      	; 0x112 <__SREG__+0xd3>
+ 112:	00 00       	nop
+		_delay_ms(1000);
+		PORTB=0X10;                    //0X01 means port B4 LED on and all off  can also be written as 0b.00000001
+ 114:	28 bb       	out	0x18, r18	; 24
+ 116:	af e3       	ldi	r26, 0x3F	; 63
+ 118:	ed e0       	ldi	r30, 0x0D	; 13
+ 11a:	f3 e0       	ldi	r31, 0x03	; 3
+ 11c:	a1 50       	subi	r26, 0x01	; 1
+ 11e:	e0 40       	sbci	r30, 0x00	; 0
+ 120:	f0 40       	sbci	r31, 0x00	; 0
+ 122:	e1 f7       	brne	.-8      	; 0x11c <__SREG__+0xdd>
+ 124:	00 c0       	rjmp	.+0      	; 0x126 <__SREG__+0xe7>
+ 126:	00 00       	nop
+		_delay_ms(1000);
+		PORTB=0X08;                    //0X01 means port B3 LED on and all off  can also be written as 0b.00000001
+ 128:	38 bb       	out	0x18, r19	; 24
+ 12a:	af e3       	ldi	r26, 0x3F	; 63
+ 12c:	ed e0       	ldi	r30, 0x0D	; 13
+ 12e:	f3 e0       	ldi	r31, 0x03	; 3
+ 130:	a1 50       	subi	r26, 0x01	; 1
+ 132:	e0 40       	sbci	r30, 0x00	; 0
+ 134:	f0 40       	sbci	r31, 0x00	; 0
+ 136:	e1 f7       	brne	.-8      	; 0x130 <__SREG__+0xf1>
+ 138:	00 c0       	rjmp	.+0      	; 0x13a <__SREG__+0xfb>
+ 13a:	00 00       	nop
+		_delay_ms(1000);
+		PORTB=0X04;                    //0X01 means port B2 LED on and all off  can also be written as 0b.00000001
+ 13c:	48 bb       	out	0x18, r20	; 24
+ 13e:	af e3       	ldi	r26, 0x3F	; 63
+ 140:	ed e0       	ldi	r30, 0x0D	; 13
+ 142:	f3 e0       	ldi	r31, 0x03	; 3
+ 144:	a1 50       	subi	r26, 0x01	; 1
+ 146:	e0 40       	sbci	r30, 0x00	; 0
+ 148:	f0 40       	sbci	r31, 0x00	; 0
+ 14a:	e1 f7       	brne	.-8      	; 0x144 <__SREG__+0x105>
+ 14c:	00 c0       	rjmp	.+0      	; 0x14e <__SREG__+0x10f>
+ 14e:	00 00       	nop
+		_delay_ms(1000);
+		PORTB=0X02;                    //0X01 means port B1 LED on and all off  can also be written as 0b.00000001
+ 150:	58 bb       	out	0x18, r21	; 24
+ 152:	af e3       	ldi	r26, 0x3F	; 63
+ 154:	ed e0       	ldi	r30, 0x0D	; 13
+ 156:	f3 e0       	ldi	r31, 0x03	; 3
+ 158:	a1 50       	subi	r26, 0x01	; 1
+ 15a:	e0 40       	sbci	r30, 0x00	; 0
+ 15c:	f0 40       	sbci	r31, 0x00	; 0
+ 15e:	e1 f7       	brne	.-8      	; 0x158 <__SREG__+0x119>
+ 160:	00 c0       	rjmp	.+0      	; 0x162 <__SREG__+0x123>
+ 162:	00 00       	nop
+		_delay_ms(1000);
+		PORTB=0X01;                    //0X01 means port B0 LED on and all off  can also be written as 0b.00000001
+ 164:	68 bb       	out	0x18, r22	; 24
+ 166:	af e3       	ldi	r26, 0x3F	; 63
+ 168:	ed e0       	ldi	r30, 0x0D	; 13
+ 16a:	f3 e0       	ldi	r31, 0x03	; 3
+ 16c:	a1 50       	subi	r26, 0x01	; 1
+ 16e:	e0 40       	sbci	r30, 0x00	; 0
+ 170:	f0 40       	sbci	r31, 0x00	; 0
+ 172:	e1 f7       	brne	.-8      	; 0x16c <__SREG__+0x12d>
+ 174:	00 c0       	rjmp	.+0      	; 0x176 <__SREG__+0x137>
+ 176:	00 00       	nop
+ 178:	69 cf       	rjmp	.-302    	; 0x4c <__SREG__+0xd>
+
+0000017a <_exit>:
+ 17a:	f8 94       	cli
+
+0000017c <__stop_program>:
+ 17c:	ff cf       	rjmp	.-2      	; 0x17c <__stop_program>

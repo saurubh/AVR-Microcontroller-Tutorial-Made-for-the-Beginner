@@ -1,0 +1,20 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Atmel Studio Solution File, Format Version 11.00
+Project("{54F91283-7BC4-4236-8FF9-10F437C3AD48}") = "1converge2diverge", "1converge2diverge\1converge2diverge.cproj", "{DE0F80A4-4726-4DD9-87F6-4EE3D7FE0916}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|AVR = Debug|AVR
+		Release|AVR = Release|AVR
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{DE0F80A4-4726-4DD9-87F6-4EE3D7FE0916}.Debug|AVR.ActiveCfg = Debug|AVR
+		{DE0F80A4-4726-4DD9-87F6-4EE3D7FE0916}.Debug|AVR.Build.0 = Debug|AVR
+		{DE0F80A4-4726-4DD9-87F6-4EE3D7FE0916}.Release|AVR.ActiveCfg = Release|AVR
+		{DE0F80A4-4726-4DD9-87F6-4EE3D7FE0916}.Release|AVR.Build.0 = Release|AVR
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

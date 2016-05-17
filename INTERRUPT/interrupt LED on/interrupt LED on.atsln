@@ -1,0 +1,20 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Atmel Studio Solution File, Format Version 11.00
+Project("{54F91283-7BC4-4236-8FF9-10F437C3AD48}") = "interrupt LED on", "interrupt LED on\interrupt LED on.cproj", "{76109824-889B-4BB8-9055-8B90A8CBD0A7}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|AVR = Debug|AVR
+		Release|AVR = Release|AVR
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{76109824-889B-4BB8-9055-8B90A8CBD0A7}.Debug|AVR.ActiveCfg = Debug|AVR
+		{76109824-889B-4BB8-9055-8B90A8CBD0A7}.Debug|AVR.Build.0 = Debug|AVR
+		{76109824-889B-4BB8-9055-8B90A8CBD0A7}.Release|AVR.ActiveCfg = Release|AVR
+		{76109824-889B-4BB8-9055-8B90A8CBD0A7}.Release|AVR.Build.0 = Release|AVR
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

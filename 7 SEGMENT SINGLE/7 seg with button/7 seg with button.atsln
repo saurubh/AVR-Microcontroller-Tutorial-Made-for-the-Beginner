@@ -1,0 +1,20 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Atmel Studio Solution File, Format Version 11.00
+Project("{54F91283-7BC4-4236-8FF9-10F437C3AD48}") = "7 seg with button", "7 seg with button\7 seg with button.cproj", "{F5A7A83B-9AB5-451A-B209-C88B56EF73B6}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|AVR = Debug|AVR
+		Release|AVR = Release|AVR
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{F5A7A83B-9AB5-451A-B209-C88B56EF73B6}.Debug|AVR.ActiveCfg = Debug|AVR
+		{F5A7A83B-9AB5-451A-B209-C88B56EF73B6}.Debug|AVR.Build.0 = Debug|AVR
+		{F5A7A83B-9AB5-451A-B209-C88B56EF73B6}.Release|AVR.ActiveCfg = Release|AVR
+		{F5A7A83B-9AB5-451A-B209-C88B56EF73B6}.Release|AVR.Build.0 = Release|AVR
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

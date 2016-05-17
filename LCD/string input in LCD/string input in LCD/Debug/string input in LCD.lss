@@ -1,0 +1,211 @@
+
+string input in LCD.elf:     file format elf32-avr
+
+Sections:
+Idx Name          Size      VMA       LMA       File off  Algn
+  0 .text         000000c0  00000000  00000000  00000074  2**1
+                  CONTENTS, ALLOC, LOAD, READONLY, CODE
+  1 .data         00000008  00800060  000000c0  00000134  2**0
+                  CONTENTS, ALLOC, LOAD, DATA
+  2 .comment      00000030  00000000  00000000  0000013c  2**0
+                  CONTENTS, READONLY
+  3 .debug_aranges 00000040  00000000  00000000  0000016c  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  4 .debug_info   00000246  00000000  00000000  000001ac  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  5 .debug_abbrev 00000164  00000000  00000000  000003f2  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  6 .debug_line   00000194  00000000  00000000  00000556  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  7 .debug_frame  00000070  00000000  00000000  000006ec  2**2
+                  CONTENTS, READONLY, DEBUGGING
+  8 .debug_str    0000019a  00000000  00000000  0000075c  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  9 .debug_loc    000000a0  00000000  00000000  000008f6  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 10 .debug_ranges 00000030  00000000  00000000  00000996  2**0
+                  CONTENTS, READONLY, DEBUGGING
+
+Disassembly of section .text:
+
+00000000 <__vectors>:
+   0:	12 c0       	rjmp	.+36     	; 0x26 <__ctors_end>
+   2:	24 c0       	rjmp	.+72     	; 0x4c <__bad_interrupt>
+   4:	23 c0       	rjmp	.+70     	; 0x4c <__bad_interrupt>
+   6:	22 c0       	rjmp	.+68     	; 0x4c <__bad_interrupt>
+   8:	21 c0       	rjmp	.+66     	; 0x4c <__bad_interrupt>
+   a:	20 c0       	rjmp	.+64     	; 0x4c <__bad_interrupt>
+   c:	1f c0       	rjmp	.+62     	; 0x4c <__bad_interrupt>
+   e:	1e c0       	rjmp	.+60     	; 0x4c <__bad_interrupt>
+  10:	1d c0       	rjmp	.+58     	; 0x4c <__bad_interrupt>
+  12:	1c c0       	rjmp	.+56     	; 0x4c <__bad_interrupt>
+  14:	1b c0       	rjmp	.+54     	; 0x4c <__bad_interrupt>
+  16:	1a c0       	rjmp	.+52     	; 0x4c <__bad_interrupt>
+  18:	19 c0       	rjmp	.+50     	; 0x4c <__bad_interrupt>
+  1a:	18 c0       	rjmp	.+48     	; 0x4c <__bad_interrupt>
+  1c:	17 c0       	rjmp	.+46     	; 0x4c <__bad_interrupt>
+  1e:	16 c0       	rjmp	.+44     	; 0x4c <__bad_interrupt>
+  20:	15 c0       	rjmp	.+42     	; 0x4c <__bad_interrupt>
+  22:	14 c0       	rjmp	.+40     	; 0x4c <__bad_interrupt>
+  24:	13 c0       	rjmp	.+38     	; 0x4c <__bad_interrupt>
+
+00000026 <__ctors_end>:
+  26:	11 24       	eor	r1, r1
+  28:	1f be       	out	0x3f, r1	; 63
+  2a:	cf e5       	ldi	r28, 0x5F	; 95
+  2c:	d4 e0       	ldi	r29, 0x04	; 4
+  2e:	de bf       	out	0x3e, r29	; 62
+  30:	cd bf       	out	0x3d, r28	; 61
+
+00000032 <__do_copy_data>:
+  32:	10 e0       	ldi	r17, 0x00	; 0
+  34:	a0 e6       	ldi	r26, 0x60	; 96
+  36:	b0 e0       	ldi	r27, 0x00	; 0
+  38:	e0 ec       	ldi	r30, 0xC0	; 192
+  3a:	f0 e0       	ldi	r31, 0x00	; 0
+  3c:	02 c0       	rjmp	.+4      	; 0x42 <__SREG__+0x3>
+  3e:	05 90       	lpm	r0, Z+
+  40:	0d 92       	st	X+, r0
+  42:	a8 36       	cpi	r26, 0x68	; 104
+  44:	b1 07       	cpc	r27, r17
+  46:	d9 f7       	brne	.-10     	; 0x3e <__SP_H__>
+  48:	2f d0       	rcall	.+94     	; 0xa8 <main>
+  4a:	38 c0       	rjmp	.+112    	; 0xbc <_exit>
+
+0000004c <__bad_interrupt>:
+  4c:	d9 cf       	rjmp	.-78     	; 0x0 <__vectors>
+
+0000004e <command>:
+	command(0x01);						//to erase LCD data completely
+}
+void command(unsigned char a)			// to give command to LCD like which position we want to show data
+{
+								// to send value of a to data pins
+	PORTB &=0xfe;						//Rs = 0	 to tell LCD that value on data pin is command
+  4e:	c0 98       	cbi	0x18, 0	; 24
+	PORTB |=0x02;						//Enable=1 to get data transfer pulse(logic 1)
+  50:	c1 9a       	sbi	0x18, 1	; 24
+	#else
+		//round up by default
+		__ticks_dc = (uint32_t)(ceil(fabs(__tmp)));
+	#endif
+
+	__builtin_avr_delay_cycles(__ticks_dc);
+  52:	e3 ec       	ldi	r30, 0xC3	; 195
+  54:	f9 e0       	ldi	r31, 0x09	; 9
+  56:	31 97       	sbiw	r30, 0x01	; 1
+  58:	f1 f7       	brne	.-4      	; 0x56 <command+0x8>
+  5a:	00 c0       	rjmp	.+0      	; 0x5c <command+0xe>
+  5c:	00 00       	nop
+	_delay_ms(10);
+	PORTB &=0xfd;
+  5e:	c1 98       	cbi	0x18, 1	; 24
+	PORTD=a;						//Enable=0 to get data transfer pulse(logic 0)
+  60:	82 bb       	out	0x12, r24	; 18
+  62:	08 95       	ret
+
+00000064 <lcd_init>:
+}
+
+// func declaration
+void lcd_init()							// to initialize LCD
+{
+	command(0x38);						//LCD init basic command
+  64:	88 e3       	ldi	r24, 0x38	; 56
+  66:	f3 df       	rcall	.-26     	; 0x4e <command>
+	command(0x06);						//LCD init basic command
+  68:	86 e0       	ldi	r24, 0x06	; 6
+  6a:	f1 df       	rcall	.-30     	; 0x4e <command>
+	//command(0x0c);						//to hide cursor
+	command(0x0e);						//to show cursor
+  6c:	8e e0       	ldi	r24, 0x0E	; 14
+  6e:	ef df       	rcall	.-34     	; 0x4e <command>
+	command(0x01);						//to erase LCD data completely
+  70:	81 e0       	ldi	r24, 0x01	; 1
+  72:	ed df       	rcall	.-38     	; 0x4e <command>
+  74:	08 95       	ret
+
+00000076 <data>:
+	PORTB &=0xfd;
+	PORTD=a;						//Enable=0 to get data transfer pulse(logic 0)
+}
+void data(unsigned char a)
+{
+	PORTD=a;
+  76:	82 bb       	out	0x12, r24	; 18
+	PORTB |=0x01;						// Rs=1	to tell LCD that value on data pins is DATA
+  78:	c0 9a       	sbi	0x18, 0	; 24
+	PORTB |=0x02;
+  7a:	c1 9a       	sbi	0x18, 1	; 24
+  7c:	83 ec       	ldi	r24, 0xC3	; 195
+  7e:	99 e0       	ldi	r25, 0x09	; 9
+  80:	01 97       	sbiw	r24, 0x01	; 1
+  82:	f1 f7       	brne	.-4      	; 0x80 <data+0xa>
+  84:	00 c0       	rjmp	.+0      	; 0x86 <data+0x10>
+  86:	00 00       	nop
+	_delay_ms(10);
+	PORTB &=0xfd;
+  88:	c1 98       	cbi	0x18, 1	; 24
+  8a:	08 95       	ret
+
+0000008c <string>:
+}
+void string(unsigned char *p)
+{
+  8c:	cf 93       	push	r28
+  8e:	df 93       	push	r29
+  90:	ec 01       	movw	r28, r24
+	//int i=0;
+	while(*p!= '\0')
+  92:	88 81       	ld	r24, Y
+  94:	88 23       	and	r24, r24
+  96:	29 f0       	breq	.+10     	; 0xa2 <string+0x16>
+  98:	21 96       	adiw	r28, 0x01	; 1
+	{
+		data(*p);
+  9a:	ed df       	rcall	.-38     	; 0x76 <data>
+	PORTB &=0xfd;
+}
+void string(unsigned char *p)
+{
+	//int i=0;
+	while(*p!= '\0')
+  9c:	89 91       	ld	r24, Y+
+  9e:	81 11       	cpse	r24, r1
+  a0:	fc cf       	rjmp	.-8      	; 0x9a <string+0xe>
+	{
+		data(*p);
+		*p++;
+	}
+  a2:	df 91       	pop	r29
+  a4:	cf 91       	pop	r28
+  a6:	08 95       	ret
+
+000000a8 <main>:
+void data(unsigned char a);
+void string(unsigned char *p);
+
+int main(void)
+{
+	DDRD=0xff;
+  a8:	8f ef       	ldi	r24, 0xFF	; 255
+  aa:	81 bb       	out	0x11, r24	; 17
+	DDRB=0xff;
+  ac:	87 bb       	out	0x17, r24	; 23
+	lcd_init();
+  ae:	da df       	rcall	.-76     	; 0x64 <lcd_init>
+	
+    string("ADITYA");
+  b0:	80 e6       	ldi	r24, 0x60	; 96
+  b2:	90 e0       	ldi	r25, 0x00	; 0
+  b4:	eb df       	rcall	.-42     	; 0x8c <string>
+}
+  b6:	80 e0       	ldi	r24, 0x00	; 0
+  b8:	90 e0       	ldi	r25, 0x00	; 0
+  ba:	08 95       	ret
+
+000000bc <_exit>:
+  bc:	f8 94       	cli
+
+000000be <__stop_program>:
+  be:	ff cf       	rjmp	.-2      	; 0xbe <__stop_program>
